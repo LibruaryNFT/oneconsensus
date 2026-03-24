@@ -25,6 +25,23 @@ export interface GameResult {
   priceChange: number
 }
 
+export interface BattleCreateResponse {
+  battle_id: string
+  start_price: number
+  ai_prediction: "UP" | "DOWN" | "FLAT"
+  ai_confidence: number
+  ai_reasoning: string
+}
+
+export interface BattleResolveResponse {
+  player_won: boolean
+  price_start: number
+  price_end: number
+  actual_direction: "UP" | "DOWN" | "FLAT"
+  player_direction: "UP" | "DOWN" | "FLAT"
+  ai_direction: "UP" | "DOWN" | "FLAT"
+}
+
 // Mock data for demo mode
 const MOCK_PRICES: Record<string, number> = {
   BTC: 67240,
@@ -96,7 +113,7 @@ export async function getPrediction(
       body: JSON.stringify({
         market,
         personality,
-        timeWindow: "1h",
+        current_price: null,
       }),
     })
 
@@ -104,7 +121,14 @@ export async function getPrediction(
       throw new Error(`API error: ${response.status}`)
     }
 
-    return await response.json()
+    const data = await response.json()
+    return {
+      market,
+      aiPersonality: personality,
+      prediction: data.direction,
+      confidence: data.confidence,
+      reasoning: data.reasoning,
+    }
   } catch (error) {
     // Demo mode: return mock prediction
     const directions: ("UP" | "DOWN" | "FLAT")[] = ["UP", "DOWN", "FLAT"]
@@ -119,6 +143,104 @@ export async function getPrediction(
       prediction,
       confidence: 0.65 + Math.random() * 0.25,
       reasoning,
+    }
+  }
+}
+
+/**
+ * Fetch leaderboard data
+ */
+export async function fetchLeaderboard(): Promise<Array<{
+  id: string
+  address: string
+  fullAddress: string
+  wins: number
+  losses: number
+  winRate: number
+  streak: number
+  totalEarned: number
+  rank: number
+}>> {
+  try {
+    const response = await fetch(`${API_URL}/api/leaderboard`, {
+      method: "GET",
+      headers: { "Content-Type": "application/json" },
+    })
+
+    if (!response.ok) {
+      throw new Error(`API error: ${response.status}`)
+    }
+
+    return await response.json()
+  } catch (error) {
+    console.error("Failed to fetch leaderboard:", error)
+    // Demo fallback: return mock leaderboard
+    return []
+  }
+}
+
+/**
+ * Create a battle with the backend
+ */
+export async function createBattle(
+  market: string,
+  playerDirection: "UP" | "DOWN" | "FLAT",
+  aiPersonality: string
+): Promise<BattleCreateResponse> {
+  try {
+    const response = await fetch(`${API_URL}/api/battle/create`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        market,
+        player_direction: playerDirection,
+        ai_personality: aiPersonality,
+      }),
+    })
+
+    if (!response.ok) {
+      throw new Error(`API error: ${response.status}`)
+    }
+
+    return await response.json()
+  } catch (error) {
+    console.error("Failed to create battle:", error)
+    // Demo fallback: return mock battle
+    return {
+      battle_id: `demo_${Date.now()}`,
+      start_price: 0,
+      ai_prediction: (["UP", "DOWN", "FLAT"][Math.floor(Math.random() * 3)] as "UP" | "DOWN" | "FLAT"),
+      ai_confidence: 0.65 + Math.random() * 0.25,
+      ai_reasoning: "Demo mode: AI reasoning not available",
+    }
+  }
+}
+
+/**
+ * Resolve a battle and get the result
+ */
+export async function resolveBattle(battleId: string): Promise<BattleResolveResponse> {
+  try {
+    const response = await fetch(`${API_URL}/api/battle/${battleId}/resolve`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+    })
+
+    if (!response.ok) {
+      throw new Error(`API error: ${response.status}`)
+    }
+
+    return await response.json()
+  } catch (error) {
+    console.error("Failed to resolve battle:", error)
+    // Demo fallback: simulate result
+    return {
+      player_won: Math.random() > 0.5,
+      price_start: 0,
+      price_end: 0,
+      actual_direction: (["UP", "DOWN", "FLAT"][Math.floor(Math.random() * 3)] as "UP" | "DOWN" | "FLAT"),
+      player_direction: (["UP", "DOWN", "FLAT"][Math.floor(Math.random() * 3)] as "UP" | "DOWN" | "FLAT"),
+      ai_direction: (["UP", "DOWN", "FLAT"][Math.floor(Math.random() * 3)] as "UP" | "DOWN" | "FLAT"),
     }
   }
 }

@@ -2,6 +2,7 @@
 
 import Link from "next/link"
 import { Zap } from "lucide-react"
+import WalletButton from "./WalletButton"
 
 export default function Header() {
   return (
@@ -46,9 +47,7 @@ export default function Header() {
         </div>
 
         {/* Wallet Connect Button */}
-        <button className="rounded-lg bg-primary px-6 py-2 font-semibold text-primary-foreground transition-all duration-200 hover:bg-primary-dark hover:shadow-lg">
-          Connect Wallet
-        </button>
+        <WalletButton />
       </nav>
     </header>
   )

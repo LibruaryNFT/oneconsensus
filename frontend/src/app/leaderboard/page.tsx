@@ -1,23 +1,47 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import { Search, Trophy, Users, TrendingUp } from "lucide-react"
 import { DEMO_LEADERBOARD_PLAYERS } from "@/lib/constants"
+import { fetchLeaderboard } from "@/lib/api"
 import LeaderboardTable from "@/components/LeaderboardTable"
 import StatsCard from "@/components/StatsCard"
 
 export default function LeaderboardPage() {
   const [searchQuery, setSearchQuery] = useState("")
+  const [players, setPlayers] = useState(DEMO_LEADERBOARD_PLAYERS)
   const [filteredPlayers, setFilteredPlayers] = useState(
     DEMO_LEADERBOARD_PLAYERS
   )
+  const [loading, setLoading] = useState(true)
+
+  // Fetch leaderboard on mount
+  useEffect(() => {
+    const loadLeaderboard = async () => {
+      setLoading(true)
+      const leaderboardData = await fetchLeaderboard()
+
+      // Use backend data if available, otherwise use demo data
+      if (leaderboardData && leaderboardData.length > 0) {
+        setPlayers(leaderboardData)
+        setFilteredPlayers(leaderboardData)
+      } else {
+        setPlayers(DEMO_LEADERBOARD_PLAYERS)
+        setFilteredPlayers(DEMO_LEADERBOARD_PLAYERS)
+      }
+
+      setLoading(false)
+    }
+
+    loadLeaderboard()
+  }, [])
 
   const handleSearch = (query: string) => {
     setSearchQuery(query)
     if (query.trim() === "") {
-      setFilteredPlayers(DEMO_LEADERBOARD_PLAYERS)
+      setFilteredPlayers(players)
     } else {
-      const filtered = DEMO_LEADERBOARD_PLAYERS.filter((player) =>
+      const filtered = players.filter((player) =>
         player.address.toLowerCase().includes(query.toLowerCase()) ||
         player.fullAddress.toLowerCase().includes(query.toLowerCase())
       )
@@ -26,17 +50,16 @@ export default function LeaderboardPage() {
   }
 
   // Calculate global stats
-  const totalBattles = DEMO_LEADERBOARD_PLAYERS.reduce(
+  const totalBattles = players.reduce(
     (sum, p) => sum + p.wins + p.losses,
     0
   )
-  const totalEarned = DEMO_LEADERBOARD_PLAYERS.reduce(
+  const totalEarned = players.reduce(
     (sum, p) => sum + p.totalEarned,
     0
   )
   const avgWinRate =
-    DEMO_LEADERBOARD_PLAYERS.reduce((sum, p) => sum + p.winRate, 0) /
-    DEMO_LEADERBOARD_PLAYERS.length
+    players.length > 0 ? players.reduce((sum, p) => sum + p.winRate, 0) / players.length : 0
 
   return (
     <div className="mx-auto max-w-6xl px-4 py-12 sm:px-6 lg:px-8">
@@ -56,23 +79,23 @@ export default function LeaderboardPage() {
         <StatsCard
           icon="⚔️"
           label="Total Battles"
-          value={totalBattles.toLocaleString()}
+          value={loading ? "..." : totalBattles.toLocaleString()}
           variant="accent"
         />
         <StatsCard
           icon={<Users className="h-6 w-6" />}
           label="Active Players"
-          value={DEMO_LEADERBOARD_PLAYERS.length}
+          value={loading ? "..." : players.length}
         />
         <StatsCard
           icon={<TrendingUp className="h-6 w-6" />}
           label="Avg Win Rate"
-          value={`${avgWinRate.toFixed(1)}%`}
+          value={loading ? "..." : `${avgWinRate.toFixed(1)}%`}
         />
         <StatsCard
           icon="💰"
           label="Total Earned"
-          value={`$${totalEarned.toLocaleString(undefined, { maximumFractionDigits: 0 })}`}
+          value={loading ? "..." : `$${totalEarned.toLocaleString(undefined, { maximumFractionDigits: 0 })}`}
           variant="accent"
         />
       </div>

@@ -1,16 +1,18 @@
 "use client"
 
 import { useState } from "react"
+import { useCurrentAccount } from "@mysten/dapp-kit"
 import MarketSelector from "@/components/MarketSelector"
 import AIOpponentCard from "@/components/AIOpponentCard"
 import PredictionPanel from "@/components/PredictionPanel"
 import CountdownTimer from "@/components/CountdownTimer"
 import BattleResult from "@/components/BattleResult"
-import { fetchPrice, simulateGameResult, PredictionResponse, GameResult } from "@/lib/api"
+import { fetchPrice, PredictionResponse, GameResult, createBattle, resolveBattle } from "@/lib/api"
 
 type GameState = "SELECT" | "PREDICT" | "WAITING" | "RESULT"
 
 export default function ArenaPage() {
+  const currentAccount = useCurrentAccount()
   const [gameState, setGameState] = useState<GameState>("SELECT")
   const [selectedMarket, setSelectedMarket] = useState<string | null>(null)
   const [selectedOpponent, setSelectedOpponent] = useState<string | null>(null)
@@ -18,6 +20,7 @@ export default function ArenaPage() {
   const [playerPrediction, setPlayerPrediction] = useState<"UP" | "DOWN" | "FLAT" | null>(null)
   const [aiResponse, setAiResponse] = useState<PredictionResponse | null>(null)
   const [gameResult, setGameResult] = useState<GameResult | null>(null)
+  const [battleId, setBattleId] = useState<string | null>(null)
 
   // Handle market selection
   const handleSelectMarket = (marketId: string) => {
@@ -39,18 +42,34 @@ export default function ArenaPage() {
   ) => {
     setPlayerPrediction(prediction)
     setAiResponse(aiResp)
+
+    // Create battle on backend
+    if (selectedMarket && selectedOpponent) {
+      const battleResponse = await createBattle(selectedMarket, prediction, selectedOpponent)
+      setBattleId(battleResponse.battle_id)
+    }
+
     setGameState("WAITING")
   }
 
   // Handle countdown timer completion
   const handleCountdownComplete = async () => {
-    if (!gameResult && playerPrediction && aiResponse && selectedMarket) {
-      const result = await simulateGameResult(
-        playerPrediction,
+    if (!gameResult && playerPrediction && aiResponse && selectedMarket && battleId) {
+      // Resolve battle on backend
+      const battleResult = await resolveBattle(battleId)
+
+      // Convert backend response to GameResult
+      const result: GameResult = {
+        playerPrediction: battleResult.player_direction,
+        aiPrediction: battleResult.ai_direction,
         startPrice,
-        aiResponse.prediction,
-        aiResponse.reasoning
-      )
+        endPrice: battleResult.price_end,
+        actualDirection: battleResult.actual_direction,
+        playerWon: battleResult.player_won,
+        aiReasoning: aiResponse.reasoning,
+        priceChange: battleResult.price_end - battleResult.price_start,
+      }
+
       setGameResult(result)
       setGameState("RESULT")
     }
@@ -65,6 +84,7 @@ export default function ArenaPage() {
     setPlayerPrediction(null)
     setAiResponse(null)
     setGameResult(null)
+    setBattleId(null)
   }
 
   // Handle moving to prediction step
@@ -86,6 +106,23 @@ export default function ArenaPage() {
           Battle AI opponents and prove your prediction prowess
         </p>
       </div>
+
+      {/* Wallet Status Banner */}
+      {!currentAccount && (
+        <div className="mb-8 rounded-lg border border-amber-500/50 bg-amber-500/10 px-6 py-4 text-center">
+          <p className="text-amber-100">
+            ✨ Connect your OneChain wallet to earn rewards! Playing in demo mode now, but your predictions won&apos;t count toward prizes.
+          </p>
+        </div>
+      )}
+
+      {currentAccount && (
+        <div className="mb-8 rounded-lg border border-green-500/50 bg-green-500/10 px-6 py-4 text-center">
+          <p className="text-green-100">
+            🎯 Wallet connected! Your predictions will earn you rewards on OneChain.
+          </p>
+        </div>
+      )}
 
       {/* SELECT STATE */}
       {gameState === "SELECT" && (
