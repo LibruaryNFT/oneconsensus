@@ -13,6 +13,32 @@ from schemas import AIPersonality, AIPrediction, ConsensusResult, RiskAssessment
 
 logger = logging.getLogger(__name__)
 
+
+def _clean_json_response(text: str) -> dict:
+    """Extract and parse JSON from LLM response, handling markdown fences and trailing commas."""
+    text = text.strip()
+    # Remove markdown fences
+    if "```" in text:
+        parts = text.split("```")
+        for part in parts:
+            part = part.strip()
+            if part.startswith("json"):
+                part = part[4:].strip()
+            if part.startswith("{"):
+                text = part
+                break
+    # Find the JSON object
+    start = text.find("{")
+    end = text.rfind("}") + 1
+    if start >= 0 and end > start:
+        text = text[start:end]
+    # Fix trailing commas before closing braces/brackets
+    import re
+
+    text = re.sub(r",\s*([}\]])", r"\1", text)
+    return json.loads(text)
+
+
 # Lazy-initialized AI clients
 _anthropic_client = None
 _openai_client = None
@@ -68,7 +94,7 @@ AI_PERSONALITIES = {
     "arbitrator": {
         "name": "The Arbitrator",
         "style": "Balanced",
-        "model": "llama-3.1-70b-versatile",
+        "model": "llama-3.3-70b-versatile",
         "confidence_base": 0.70,
         "temperature": 0.6,
         "client_type": "groq",
@@ -178,7 +204,7 @@ async def _get_claude_assessment(asset: RWAAsset, personality: str) -> dict:
                 response_text = response_text[4:]
             response_text = response_text.strip()
 
-        assessment = json.loads(response_text)
+        assessment = _clean_json_response(response_text)
         return assessment
     except Exception as e:
         logger.error(f"Claude assessment failed: {e}")
@@ -200,6 +226,7 @@ async def _get_openai_assessment(asset: RWAAsset, personality: str) -> dict:
             max_tokens=1000,
             temperature=config["temperature"],
             messages=[{"role": "user", "content": prompt}],
+            response_format={"type": "json_object"},
         )
 
         response_text = response.choices[0].message.content.strip()
@@ -211,7 +238,7 @@ async def _get_openai_assessment(asset: RWAAsset, personality: str) -> dict:
                 response_text = response_text[4:]
             response_text = response_text.strip()
 
-        assessment = json.loads(response_text)
+        assessment = _clean_json_response(response_text)
         return assessment
     except Exception as e:
         logger.error(f"OpenAI assessment failed: {e}")
@@ -246,7 +273,7 @@ async def _get_groq_assessment(asset: RWAAsset, personality: str) -> dict:
                     response_text = response_text[4:]
                 response_text = response_text.strip()
 
-            assessment = json.loads(response_text)
+            assessment = _clean_json_response(response_text)
             return assessment
     except Exception as e:
         logger.error(f"Groq assessment failed: {e}")
@@ -492,7 +519,7 @@ Respond ONLY with valid JSON (no markdown, no extra text):
                     if response_text.startswith("json"):
                         response_text = response_text[4:]
                     response_text = response_text.strip()
-                raw_prediction = json.loads(response_text)
+                raw_prediction = _clean_json_response(response_text)
         elif config["client_type"] == "openai":
             client = _get_openai_client()
             if client:
@@ -508,7 +535,7 @@ Respond ONLY with valid JSON (no markdown, no extra text):
                     if response_text.startswith("json"):
                         response_text = response_text[4:]
                     response_text = response_text.strip()
-                raw_prediction = json.loads(response_text)
+                raw_prediction = _clean_json_response(response_text)
         else:  # groq
             async with httpx.AsyncClient(timeout=10.0) as client:
                 response = await client.post(
@@ -529,7 +556,7 @@ Respond ONLY with valid JSON (no markdown, no extra text):
                     if response_text.startswith("json"):
                         response_text = response_text[4:]
                     response_text = response_text.strip()
-                raw_prediction = json.loads(response_text)
+                raw_prediction = _clean_json_response(response_text)
     except Exception as e:
         logger.warning(f"AI service failed for {personality}, using mock: {e}")
 
