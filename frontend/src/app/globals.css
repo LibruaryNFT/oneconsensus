@@ -1,0 +1,57 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+* {
+  @apply border-border;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  @apply bg-background text-foreground;
+  font-feature-settings: "rounding-mode" round;
+}
+
+/* Smooth scrollbar */
+::-webkit-scrollbar {
+  @apply w-2;
+}
+
+::-webkit-scrollbar-track {
+  @apply bg-input;
+}
+
+::-webkit-scrollbar-thumb {
+  @apply bg-border rounded-full;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  @apply bg-primary;
+}
+
+/* Gradient text utility */
+.gradient-text {
+  @apply bg-gradient-to-r from-primary via-accent to-primary-dark bg-clip-text text-transparent;
+}
+
+/* Card styles */
+.card {
+  @apply rounded-lg border border-border bg-card p-6;
+}
+
+.card-sm {
+  @apply rounded-lg border border-border bg-card p-4;
+}
+
+/* Button reset for interactive elements */
+button {
+  @apply cursor-pointer transition-colors duration-200;
+}
+
+/* Links */
+a {
+  @apply text-primary hover:text-primary-dark transition-colors duration-200;
+}

@@ -1,0 +1,13 @@
+[package]
+name = "one_predict_arena"
+edition = "2024.beta"
+
+[dependencies]
+One = { git = "https://github.com/one-chain-labs/onechain.git", subdir = "crates/sui-framework/packages/one-framework", rev = "1.0.4" }
+
+[addresses]
+one_predict_arena = "0x0"
+
+[dev-dependencies]
+
+[dev-addresses]
