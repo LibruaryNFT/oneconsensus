@@ -13,55 +13,55 @@ interface TransactionResult {
   explorerLink?: string
 }
 
-/**
- * Simulates a transaction submission to OneChain
- * In production, this would use @mysten/dapp-kit transaction API
- * @param assetId - The asset being evaluated
- * @param riskScore - Risk score from consensus
- * @param recommendation - AI recommendation
- * @returns Transaction result with hash and explorer link
- */
-function generateMockTxHash(): string {
-  // Simulate a OneChain transaction hash
-  const chars = "0123456789abcdef"
-  let hash = "0x"
-  for (let i = 0; i < 64; i++) {
-    hash += chars.charAt(Math.floor(Math.random() * chars.length))
-  }
-  return hash
-}
 
 export function useBlockchain() {
   const currentAccount = useCurrentAccount()
 
   const recordAssessmentOnChain = useCallback(
-    async (_assetId: string, _riskScore: number, _recommendation: string): Promise<TransactionResult> => {
-      // Without a connected wallet, we simulate the transaction
-      if (!currentAccount) {
-        // Simulated transaction for demo
-        const mockTxHash = generateMockTxHash()
-        return {
-          success: true,
-          txHash: mockTxHash,
-          message: "Assessment recorded on OneChain testnet (simulated)",
-          explorerLink: `https://onescan.cc/testnet/tx/${mockTxHash}`,
-        }
-      }
-
+    async (assetId: string, riskScore: number, recommendation: string): Promise<TransactionResult> => {
       try {
-        // In a real implementation, this would:
-        // 1. Call the leaderboard module to record the assessment
-        // 2. Execute transaction via useSignAndExecuteTransaction
-        // 3. Return actual transaction hash
+        // Call server-side API to record assessment on-chain
+        // The API will use the deployer keypair to sign and submit the transaction
+        const response = await fetch('/api/record-assessment', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            assetId,
+            riskScore,
+            recommendation,
+            assessmentsHash: `${assetId}-${riskScore}-${Date.now()}`,
+          }),
+        })
 
-        // For now, simulate successful transaction
-        const mockTxHash = generateMockTxHash()
+        const data = await response.json()
+
+        if (!response.ok) {
+          return {
+            success: false,
+            txHash: "",
+            message: `API error: ${data.error || 'Unknown error'}`,
+          }
+        }
+
+        if (!data.success) {
+          return {
+            success: false,
+            txHash: "",
+            message: data.error || 'Failed to record assessment',
+          }
+        }
+
+        const accountInfo = currentAccount
+          ? `from ${currentAccount.address.slice(0, 6)}...${currentAccount.address.slice(-4)}`
+          : 'via server keypair'
 
         return {
           success: true,
-          txHash: mockTxHash,
-          message: `Assessment recorded on OneChain testnet from ${currentAccount.address.slice(0, 6)}...${currentAccount.address.slice(-4)}`,
-          explorerLink: `https://onescan.cc/testnet/tx/${mockTxHash}`,
+          txHash: data.txDigest,
+          message: `Assessment recorded on OneChain testnet ${accountInfo}`,
+          explorerLink: data.explorerLink,
         }
       } catch (error) {
         return {
