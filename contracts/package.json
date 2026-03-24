@@ -1,5 +1,7 @@
 {
   "dependencies": {
-    "@onelabs/sui": "^1.26.2"
+    "@onelabs/sui": "^1.26.2",
+    "tsx": "^4.21.0",
+    "typescript": "^5.9.3"
   }
 }

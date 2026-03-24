@@ -1,0 +1,13 @@
+{
+  "packageId": "0x1f0b34d95db5859753f3aa7508055c5c049e33d313acf3585bf039cf22fb974e",
+  "network": "onechain-testnet",
+  "rpc": "https://rpc-testnet.onelabs.cc:443",
+  "deployer": "0xb379f5e673d9602fd9bc0b7e6d4b36dd5fdc4897ac7a44085961783196256409",
+  "txDigest": "7mmSkfmpzk4wXN3j5fgPms6KcUM1R8Md7wLFDvkLXdma",
+  "deployedAt": "2026-03-24T21:36:08.005Z",
+  "modules": [
+    "leaderboard.mv",
+    "prediction_pool.mv",
+    "rewards.mv"
+  ]
+}

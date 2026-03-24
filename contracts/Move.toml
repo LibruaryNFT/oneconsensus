@@ -3,7 +3,7 @@ name = "one_predict_arena"
 edition = "2024.beta"
 
 [dependencies]
-Sui = { git = "https://github.com/MystenLabs/sui.git", subdir = "crates/sui-framework/packages/sui-framework", rev = "framework/testnet" }
+One = { git = "https://github.com/one-chain-labs/onechain.git", subdir = "crates/sui-framework/packages/one-framework", rev = "v1.0.1", override = true }
 
 [addresses]
 one_predict_arena = "0x0"
