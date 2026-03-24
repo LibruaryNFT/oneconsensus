@@ -1,100 +1,214 @@
-# OnePredict Arena — Architecture
+# OneConsensus — Architecture
 
 ## System Overview
 
-**OnePredict Arena** is a **3-tier AI prediction game** where human players challenge AI opponents to predict cryptocurrency price movements on OneChain.
+**OneConsensus** is a **multi-agent AI risk assessment platform** for real-world assets on OneChain. Three agents with different perspectives evaluate RWA risk, reach consensus, and provide on-chain verified assessment.
 
 ```
-┌─────────────────────────────────────────────────────────────┐
-│                      PLAYER'S BROWSER                        │
-├─────────────────────────────────────────────────────────────┤
-│   Next.js Frontend (React 19, TailwindCSS, shadcn/ui)        │
-│   - Market selection, AI opponent selection                  │
-│   - Real-time prediction display with AI reasoning           │
-│   - Battle countdown (5-60 seconds)                          │
-│   - Result display with price delta analysis                 │
-│   - Leaderboard + player profile                             │
-│   - Wallet integration (OneWallet via dapp-kit)              │
-└────────────────────────────┬────────────────────────────────┘
-                             │ REST API
-                             │ (Market price, AI predictions,
-                             │  Battle lifecycle, Leaderboard)
-┌────────────────────────────▼────────────────────────────────┐
-│                     BACKEND SERVER                           │
-├─────────────────────────────────────────────────────────────┤
-│   FastAPI (Python, async)                                    │
-│   - 8 endpoints (health, price, personalities, predict)      │
-│   - Price feeds (CoinGecko API)                              │
-│   - Battle engine (create, resolve, track)                   │
-│   - Leaderboard mock data                                    │
-│   - AI predictor bridge (Claude, GPT, Llama)                 │
-└────────────┬────────────────────────────┬───────────────────┘
-             │                            │
-             │ Price Data                 │ LLM API Calls
-             │                            │
-    ┌────────▼──────────┐      ┌──────────▼──────────┐
-    │  CoinGecko API    │      │  AI Model Engines   │
-    │  (Price history)  │      │  - Claude 3 Sonnet  │
-    │  OneDEX (real-    │      │  - GPT-4o           │
-    │   time feeds)     │      │  - Llama 3.1        │
-    └───────────────────┘      └─────────────────────┘
-        │
-        └────────────┬──────────────────────────────┐
-                     │                              │
-            ┌────────▼──────────┐      ┌───────────▼────┐
-            │    OneChain       │      │   OneChain      │
-            │    Contracts      │      │   Wallet        │
-            │    (Move)         │      │   (Auth +       │
-            │    - Prediction   │      │    Stake)       │
-            │      Pool         │      │                 │
-            │    - Leaderboard  │      └─────────────────┘
-            │    - Rewards      │
-            └───────────────────┘
+┌──────────────────────────────────────────────────────────────┐
+│              RWA INVESTOR / ANALYST PORTAL                   │
+│  (Web UI, Mobile App, or Direct API Client)                  │
+└────────────────────────┬─────────────────────────────────────┘
+                         │ REST API
+                         │ (Assets, Evaluations, Agents)
+┌────────────────────────▼─────────────────────────────────────┐
+│                  ONECONSENSUS BACKEND                         │
+│          FastAPI (Python, async consensus engine)            │
+├──────────────────────────────────────────────────────────────┤
+│                    RWA EVALUATION LAYER                      │
+│  ┌──────────────┐  ┌──────────────┐  ┌──────────────┐       │
+│  │   AUDITOR    │  │ RISK OFFICER │  │ ARBITRATOR   │       │
+│  │  (Claude)    │  │  (GPT-4o)    │  │ (Llama 70B)  │       │
+│  │              │  │              │  │              │       │
+│  │ Yield Outlook│  │ Risk Analysis│  │ Reconcile    │       │
+│  │ Lower Collat │  │ Higher Collat│  │ Final Call   │       │
+│  └──────────────┘  └──────────────┘  └──────────────┘       │
+│  Evaluates: ↓         Evaluates: ↓      Synthesis: ↓        │
+│  - Growth potential   - Geopolitical risk - Consensus score │
+│  - Inflation hedge    - Regulatory risk  - Collateral ratio  │
+│  - Lease quality      - Market volatility - Valuation        │
+│                                          - Recommendation    │
+├──────────────────────────────────────────────────────────────┤
+│                    ASSET REGISTRY LAYER                      │
+│  - 6 sample RWA assets (real estate, energy, maritime)       │
+│  - Asset descriptors, risk factors, yield rates              │
+└──────────┬───────────────────────┬────────────────────────────┘
+           │                       │
+   ┌───────▼──────┐       ┌────────▼──────────┐
+   │  LLM APIs    │       │  OneChain         │
+   │              │       │  (Future Wiring)  │
+   │ - Anthropic  │       │  - OneRWA         │
+   │   (Claude)   │       │  - OneWallet      │
+   │ - OpenAI     │       │  - OnePredict     │
+   │   (GPT-4o)   │       │  - OneID          │
+   │ - Groq       │       │                   │
+   │   (Llama)    │       └───────────────────┘
+   └──────────────┘
 ```
 
 ---
 
-## Data Flow
+## Data Flow: Asset Evaluation
 
-### 1. Game Initiation
-1. Player connects OneWallet
-2. Player selects **market** (BTC, ETH, SOL, FLOW)
-3. Player selects **AI opponent** (Oracle, Sentinel, Prophet, Cipher)
-4. Frontend fetches current price: `GET /api/price/{market}`
-5. Backend returns price from CoinGecko
+### 1. Investor Initiates Evaluation
+1. Investor calls `POST /api/evaluate?asset_id=medellin-tech-hub`
+2. System fetches asset metadata (location, value, yield, risks)
+3. **Two agents launch in parallel:**
 
-### 2. Battle Creation
-1. Player makes prediction: **UP**, **DOWN**, or **FLAT**
-2. Frontend calls `POST /api/battle/create` with:
-   - Market
-   - Player's direction
-   - AI personality
-3. Backend generates **battle_id** and initializes battle state
-4. AI personality invoked: `POST /api/predict` returns:
-   - AI's predicted direction
-   - Confidence level (0–100)
-   - Reasoning (why AI made this call)
+### 2a. Auditor Assessment (Parallel)
+- System sends asset to Claude Opus with prompt:
+  - "You are a yield-maximalist financial analyst"
+  - "Identify growth potential, positive cash flows, collateral floor"
+  - "Propose lower collateral requirements"
+- Claude returns:
+  - Risk score (typically 25–40)
+  - Collateral ratio (typically 110–120%)
+  - Valuation estimate
+  - Detailed reasoning
 
-### 3. Battle Resolution
-1. Countdown timer runs (5–60 seconds configurable)
-2. At timeout, frontend calls `POST /api/battle/{battle_id}/resolve`
-3. Backend fetches **end price** from CoinGecko
-4. Backend calculates direction (price went UP/DOWN/FLAT)
-5. Outcome determined:
-   - If player prediction == actual direction → **WIN** → stake × 2
-   - If AI prediction == actual direction → **AI WINS** → stake lost
-   - If price flat → **DRAW** → stake returned
-6. Result sent to frontend with price delta
+### 2b. Risk Officer Assessment (Parallel)
+- System sends asset to GPT-4o-mini with prompt:
+  - "You are a risk-minimalist financial regulator"
+  - "Identify downside scenarios, regulatory risks, tail events"
+  - "Propose higher collateral requirements"
+- GPT returns:
+  - Risk score (typically 50–70)
+  - Collateral ratio (typically 140–160%)
+  - Valuation estimate
+  - Detailed reasoning
 
-### 4. Leaderboard Update
-- Player stats updated on OneChain contract (optional for hackathon)
-- Leaderboard endpoint returns top 15 players
+### 3. Arbitrator Synthesis (Sequential)
+- Arbitrator (Llama 70B) reads both assessments
+- Arbitrator synthesizes:
+  - Final risk score (weighted average, typically 40–50)
+  - Final collateral ratio (compromise, typically 125–135%)
+  - Debate summary: "Auditor bullish on yield, Risk Officer cautious on political risk"
+  - Final recommendation: Strong Buy / Buy / Hold / Caution / Strong Caution
+  - Explanation of consensus reasoning
+
+### 4. Return Full Assessment
+Investor receives:
+```json
+{
+  "asset": { ... },
+  "assessments": [
+    { "agent": "Auditor", "risk_score": 32, "collateral_ratio": 112.5, ... },
+    { "agent": "Risk Officer", "risk_score": 58, "collateral_ratio": 145.0, ... },
+    { "agent": "Arbitrator", "risk_score": 45, "collateral_ratio": 128.0, ... }
+  ],
+  "final_risk_score": 45.0,
+  "final_collateral_ratio": 128.0,
+  "consensus_reasoning": "...",
+  "recommendation": "Buy"
+}
+```
+
+---
+
+## Key Architectural Decisions
+
+### 1. **Parallel Assessment (Auditor + Risk Officer)**
+- **Why:** Consensus requires debate. Two perspectives running in parallel avoids false consensus.
+- **Implementation:** `asyncio.gather(auditor_task, risk_officer_task)` runs both concurrently
+- **Benefit:** 5–10 second evaluation vs. 15+ if sequential
+
+### 2. **Asymmetric Agent Personalities**
+- **Auditor:** Temperature=0.9 (more creative, optimistic framings)
+- **Risk Officer:** Temperature=0.6 (more analytical, risk-focused)
+- **Arbitrator:** Temperature=0.7 (balanced)
+- **Why:** Different "styles" from different temperatures create realistic disagreement
+
+### 3. **LLM Diversity** (Not LLM Consensus)
+- **Auditor:** Claude Opus (good at financial reasoning, structured analysis)
+- **Risk Officer:** GPT-4o-mini (good at risk taxonomy, regulatory frameworks)
+- **Arbitrator:** Llama 3.1 70B (open-source, good at synthesis, lower cost)
+- **Why:** Different models think differently. Consensus across 3 models > consensus from 1 model repeated 3 times
+
+### 4. **Graceful Fallback**
+If any API fails:
+- System still returns assessment in the agent's style (mock if needed)
+- Response labeled clearly ("using fallback reasoning")
+- No crashes, judges see full flow even without real API keys
+- **Why:** Hackathon stability + production readiness
+
+---
+
+## Move Smart Contract Design
+
+### `rwa_assessment.move` (Skeleton)
+
+**Struct: RWAAssetAssessment**
+```move
+public struct RWAAssetAssessment<T> has key {
+    id: UID,
+    asset_id: String,
+    auditor_risk_score: u8,
+    risk_officer_risk_score: u8,
+    arbitrator_risk_score: u8,
+    final_collateral_ratio: u64,
+    timestamp: u64,
+    assessor: address,
+}
+```
+
+**Entry Function: store_assessment**
+```move
+public fun store_assessment(
+    asset_id: String,
+    auditor_score: u8,
+    risk_officer_score: u8,
+    arbitrator_score: u8,
+    collateral_ratio: u64,
+    ctx: &mut TxContext,
+) { ... }
+```
+
+**Integration Path:**
+1. Backend evaluates asset → gets consensus scores
+2. Backend calls `store_assessment` on OneChain
+3. Scores recorded on-chain for history/appeal
+4. RWA protocol reads latest assessment
+5. Collateral pool adjusts based on consensus ratio
+
+---
+
+## API Endpoints
+
+### 1. List Assets
+```
+GET /api/assets
+```
+Returns all RWA assets with basic info (6 samples)
+
+### 2. Get Asset Details
+```
+GET /api/assets/{asset_id}
+```
+Returns full asset metadata + risk factors
+
+### 3. Evaluate Asset (Main Endpoint)
+```
+POST /api/evaluate?asset_id={asset_id}
+```
+Triggers 3-agent consensus (5–15 seconds)
+
+### 4. List Agents
+```
+GET /api/agents
+```
+Returns Auditor, Risk Officer, Arbitrator metadata
+
+### 5. Health Check
+```
+GET /health
+GET /api/health
+```
 
 ---
 
 ## Component Breakdown
 
-### Frontend (`frontend/src/`)
+### Frontend (`frontend/src/` — Coming Soon)
 
 #### Pages
 - **`app/arena/page.tsx`** — Main battle arena (4 states: SELECT → PREDICT → WAITING → RESULT)

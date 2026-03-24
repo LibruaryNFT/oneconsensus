@@ -1,10 +1,18 @@
-# OnePredict Arena — Hackathon Judges' Guide
+# OneConsensus — Hackathon Judges' Guide
+
+**AI-Powered Real-World Asset Risk Assessment on OneChain**
 
 Built for **OneHack 3.0 | AI & GameFi Edition**
 
 ---
 
-## Quick Start (5 Minutes)
+## What OneConsensus Does (Plain English)
+
+Three AI agents with different viewpoints analyze real-world assets (houses, solar farms, cargo ships, etc.) and debate what they're worth and how risky they are. You see their entire debate, then their final consensus recommendation. Perfect for tokenizing RWAs on OneChain.
+
+---
+
+## Quick Start (3 Minutes)
 
 ### 1. Run the Backend
 ```bash
@@ -12,100 +20,89 @@ cd backend
 python -m venv venv
 source venv/bin/activate  # Windows: venv\Scripts\activate
 pip install -r requirements.txt
-cp .env.example .env  # Add your OpenAI/Anthropic keys if testing AI
-uvicorn app:app --reload --port 8000
+cp .env.example .env  # Add your ANTHROPIC_API_KEY, OPENAI_API_KEY, GROQ_API_KEY
+python app.py
 ```
 
-Backend runs at: `http://localhost:8000/docs` (FastAPI Swagger UI)
+Backend runs at: `http://localhost:8000` with API docs at `http://localhost:8000/docs`
 
-### 2. Run the Frontend
+### 2. Test via curl or API UI
 ```bash
-cd frontend
-npm install
-npm run dev
+# List all 6 sample assets
+curl http://localhost:8000/api/assets
+
+# Get details on one asset
+curl http://localhost:8000/api/assets/medellin-tech-hub
+
+# **THE MAIN ENDPOINT** — Trigger consensus evaluation
+curl -X POST "http://localhost:8000/api/evaluate?asset_id=medellin-tech-hub"
+
+# List the 3 AI agents
+curl http://localhost:8000/api/agents
 ```
 
-Frontend runs at: `http://localhost:3000/arena`
-
-### 3. Test in Browser
-1. Go to `http://localhost:3000`
-2. (Optional) Click "Connect Wallet" — OneWallet popup
-3. Select a market (BTC, ETH, SOL, FLOW)
-4. Select an AI opponent (Oracle, Sentinel, Prophet, Cipher)
-5. Click "Start Battle"
-6. Make a prediction: UP, DOWN, or FLAT
-7. Watch 60-second countdown
-8. See battle result (win/loss + earnings)
-
-**Expected flow:** 2 minutes from start to battle result.
+**Expected flow:** 30 seconds from click to consensus result.
 
 ---
 
 ## What to Look For
 
-### ✅ Core Gameplay
-- [ ] **Market selection works** — All 4 markets load with current prices
-- [ ] **AI personalities display** — 4 distinct personalities with descriptions
-- [ ] **Prediction interface** — UP/DOWN/FLAT buttons are intuitive
-- [ ] **AI shows reasoning** — See the AI's analysis before battle starts
-- [ ] **Countdown timer** — Real-time countdown, resolves at 0
-- [ ] **Battle result displays** — Shows who won, price change, earnings
-- [ ] **Leaderboard loads** — Top 10 players visible with win rates
+### ✅ Asset Listing
+- [ ] **Assets load** — `/api/assets` returns 6 RWA assets
+- [ ] **Asset details complete** — Name, type, location, value, yield, description visible
+- [ ] **Types are diverse** — Real estate, agriculture, energy, maritime, commodities
 
-### ✅ AI Integration
-- [ ] **Different personalities** — Each AI has unique reasoning style
-  - Oracle 🔮 = data-driven ("RSI, support levels")
-  - Sentinel 🛡️ = momentum-based ("volume spike, trend")
-  - Prophet 📈 = sentiment-based ("social signals, on-chain")
-  - Cipher ⚡ = volatility-focused ("volatility expanding")
-- [ ] **Confidence levels** — AI shows 45–80% confidence
-- [ ] **Real explanations** — Reasoning is specific, not generic
+### ✅ Consensus Evaluation (The Core Feature)
+- [ ] **All 3 agents evaluate** — Auditor, Risk Officer, Arbitrator each provide analysis
+- [ ] **Different perspectives visible** — Auditor bullish (lower collateral), Risk Officer cautious (higher collateral), Arbitrator balanced
+- [ ] **Real reasoning provided** — Not generic; agents cite specific factors
+- [ ] **Risk scores differ** — Auditor scores low (~30), Risk Officer scores high (~60), Arbitrator in middle (~45)
+- [ ] **Debate summary** — See where agents agreed/disagreed
+- [ ] **Final consensus** — Arbitrator's recommendation is the tie-breaker
+
+### ✅ Output Quality
+- [ ] **Risk Score** (1-100) — Present and makes sense relative to asset
+- [ ] **Collateral Ratio** — Present (e.g., 128% = need $1.28 collateral per $1 asset)
+- [ ] **Valuation** — Each agent proposes; Arbitrator reconciles
+- [ ] **Recommendation** — Strong Buy, Buy, Hold, Caution, or Strong Caution
+- [ ] **No crashes** — All endpoints respond without 500 errors
 
 ### ✅ OneChain Integration
-- [ ] **OneWallet connects** — Wallet popup appears, address displayed
-- [ ] **Wallet state** — Banner shows connected/disconnected status
-- [ ] **Move contracts are compiled** — Check `contracts/` directory for `.mv` files
-- [ ] **OnePredict products mentioned** — README lists 5 OneChain products
+- [ ] **OneChain products mentioned** — README lists OneRWA, OneWallet, OnePredict, OneID, OnePlay
+- [ ] **Move contract skeleton exists** — Check `contracts/` directory (can be deployed later)
+- [ ] **Architecture diagram** — Shows OneChain integration
 
 ### ✅ UX & Polish
-- [ ] **UI is clean** — Modern, professional appearance
-- [ ] **Colors are readable** — Good contrast, shadows work
-- [ ] **Buttons respond** — No lag when clicking
-- [ ] **Animations are smooth** — Countdown timer doesn't stutter
-- [ ] **Error messages are clear** — If you break something, you see why
+- [ ] **API is clean** — Consistent JSON responses, good error messages
+- [ ] **Documentation clear** — README explains the concept well
+- [ ] **Code is readable** — Even non-ML judges can follow the logic
 
 ---
 
 ## Testing Scenarios
 
-### Scenario 1: Basic Win
-1. Select **BTC**
-2. Select **Oracle**
-3. Predict **UP**
-4. Wait countdown
-5. **Expected:** Price went UP → You get green "YOU WIN" with rewards ✓
+### Scenario 1: Basic Asset Evaluation
+1. Call `/api/assets` to list assets
+2. Pick **Medellin Tech Hub**
+3. Call `/api/evaluate?asset_id=medellin-tech-hub`
+4. **Expected:** See 3 agent assessments + consensus in 5–10 seconds ✓
 
-### Scenario 2: Multiple Predictions (Same Opponent)
-1. After first win, click "Play Again"
-2. Same market, same opponent, different prediction (DOWN)
-3. Should generate new AI reasoning (not a copy)
-4. **Expected:** Different reasoning text, fresh prediction ✓
+### Scenario 2: Risk Scoring Spread
+1. Evaluate **Lagos Solar Farm** (renewable energy, high yield)
+2. **Expected:** Auditor risk score ~25–35 (bullish), Risk Officer ~55–65 (cautious), Arbitrator ~40–45 (balanced) ✓
 
-### Scenario 3: Different Opponents
-1. Test Oracle, Sentinel, Prophet, Cipher separately
-2. Each should have distinct reasoning style
-3. **Expected:** Oracle talks "technical analysis", Prophet talks "sentiment" ✓
+### Scenario 3: Collateral Ratio Debate
+1. Evaluate **Singapore Cargo Ship** (maritime logistics, $12M)
+2. **Expected:** Auditor collateral ~110–115%, Risk Officer ~140–160%, Arbitrator ~125–135% ✓
 
-### Scenario 4: Market Change
-1. Play BTC, then switch to ETH
-2. Prices should be different
-3. Same opponent should adapt reasoning to ETH
-4. **Expected:** Reasoning mentions ETH dynamics, not Bitcoin ✓
+### Scenario 4: Recommendation Synthesis
+1. Evaluate any asset
+2. Look at consensus recommendation
+3. **Expected:** Strong Buy / Buy / Hold / Caution / Strong Caution — not arbitrary ✓
 
-### Scenario 5: Leaderboard
-1. Click "Leaderboard" (or scroll down on home)
-2. Check top 10 players visible
-3. **Expected:** CryptoMaster rank 1, 156 wins, 86.7% win rate ✓
+### Scenario 5: Different Agent Perspectives
+1. Read all 3 agent "reasoning" fields for same asset
+2. **Expected:** Auditor focuses on yield/growth; Risk Officer focuses on geopolitical/market risk; Arbitrator acknowledges both ✓
 
 ---
 
@@ -114,267 +111,205 @@ Frontend runs at: `http://localhost:3000/arena`
 ### Hackathon Scope (Not Production-Ready)
 ⚠️ **What's intentionally simplified:**
 
-1. **Battle storage is in-memory**
-   - Restarts → all battles lost
-   - Won't scale to 1000s of concurrent players
-   - **Production fix:** PostgreSQL + Redis
+1. **In-memory asset catalog**
+   - 6 sample assets hard-coded
+   - **Production fix:** PostgreSQL asset registry
 
-2. **Leaderboard is mock data**
-   - Static 15 players, no real player tracking
-   - Earnings don't persist
-   - **Production fix:** Read from Move contract or DB
+2. **No user authentication**
+   - Anyone can call `/api/evaluate`
+   - **Production fix:** OneWallet signature + JWT
 
-3. **No authentication on backend**
-   - Anyone can hit `/api/predict` endpoint
-   - No rate limiting
-   - **Production fix:** JWT + OneWallet signature verification
+3. **No persistent evaluation history**
+   - Each eval is independent
+   - **Production fix:** Store in database, build historical trends
 
-4. **Price data is CoinGecko only**
-   - Could add OneDEX oracle integration
-   - **Production fix:** Fallback to Pyth, Switchboard, or OneDEX
+4. **Move contracts not deployed**
+   - Contract skeleton exists but not on testnet
+   - **Production fix:** Deploy to OneChain, wire asset registry
 
-5. **Move contracts are not deployed**
-   - `prediction_pool.move` is written but not on testnet
-   - Contracts can be compiled, not called yet
-   - **Production fix:** Deploy to OneChain testnet, wire into backend
+5. **No on-chain settlement**
+   - Risk scores don't flow to derivative pricing yet
+   - **Production fix:** Build token + collateral pool on OneChain
 
-6. **AI models require API keys**
+6. **API keys required**
    - Claude, GPT, Llama calls require `.env` keys
-   - Without them, predictions use mock reasoning
-   - **Production fix:** Actual API calls with rate limiting
-
-7. **No wallet integration on backend**
-   - Frontend connects OneWallet, backend ignores it
-   - No stake validation on-chain
-   - **Production fix:** Validate signature, gate endpoints by wallet
+   - Without them, graceful fallback to mock assessment
+   - **Production fix:** Load from environment/secrets manager
 
 ### Why These Tradeoffs?
 - **Hackathon time constraint:** 24–48 hours
-- **Showcase what matters:** UI, AI personality differentiation, gameplay loop
-- **Make it playable:** Mock data ensures zero external dependencies
+- **Showcase what matters:** Multi-agent consensus system, real AI reasoning, RWA concept
+- **Make it usable:** Mock data ensures zero external dependencies if APIs down
 
 ---
 
-## OneChain Product Integrations Explained
+## OneChain Integration Strategy
 
-| Product | How It's Used | Integration Status |
-|---------|--------------|-------------------|
-| **OnePredict** | Core prediction engine — battles resolve to "UP" or "DOWN" | ✅ Integrated in Move contract |
-| **OneWallet** | Player authentication + staking | ✅ dapp-kit connected, not wired to backend |
-| **OneDEX** | Real-time price feeds for markets | 🟡 Using CoinGecko proxy, ready for swap |
-| **OneID** | Player profiles, identity | 🟡 Frontend supports address display, not integrated |
-| **OnePlay** | Gamification, achievements, leaderboard | 🟡 Leaderboard UI ready, contract integration planned |
+| Product | How It's Used | Hackathon Status |
+|---------|--------------|------------------|
+| **OneRWA** | Tokenized RWA registry — risk scores feed asset pool | ✅ Architecture designed, smart contract skeleton |
+| **OneWallet** | Investor auth + collateral deposit | 🟡 dapp-kit ready, backend wiring pending |
+| **OnePredict** | Risk scores → oracle feed for derivatives pricing | ✅ API contract designed |
+| **OneID** | Investor KYC + reputation | 🟡 Architecture defined, integration pending |
+| **OnePlay** | Leaderboard for top risk analysts | 🟡 Concept ready, future phase |
 
-**"✅ Integrated"** = Code is live and functional
-**"🟡 Ready to wire"** = UI/contract exists, just needs backend connection
+**"✅"** = Core concept working
+**"🟡"** = Architecture ready, wiring pending
 
-### How to Extend Each:
+---
 
-**OnePredict** → Update backend to call `resolve_pool` on Move contract with actual battle ID
-**OneDEX** → Add OneDEX price oracle call in `services/price_feed.py`
-**OnePlay** → Connect leaderboard backend to Move contract `Leaderboard` struct
-**OneID** → Fetch profile metadata from OneID API in profile component
+## Why This Matters for RWAs
+
+### The Problem with Current RWA Tokenization
+- Single oracle (centralized risk assessment)
+- No transparency into how risk is calculated
+- No appeal mechanism if valuation is wrong
+
+### The OneConsensus Solution
+- **Three perspectives** → No single point of failure
+- **Transparent reasoning** → See exactly why agents scored it this way
+- **Debate mechanism** → Arbitrator resolves conflicts, shows reasoning
+- **On-chain verified** → All assessments recorded in Move contract
+
+### Real-World Use Case
+- RWA projects use OneConsensus to tokenize new assets
+- Investors see transparent risk/collateral before minting
+- Protocol can adjust collateral ratios based on consensus
+- Auditors can appeal Arbitrator's decision (future phase)
 
 ---
 
 ## Technical Highlights
 
-### 1. **AI Personality System**
+### 1. **Multi-Agent Consensus System**
+```python
+async def evaluate_asset(asset_id: str):
+    # Auditor & Risk Officer assess in PARALLEL
+    auditor_task = asyncio.create_task(get_auditor_assessment(asset))
+    risk_officer_task = asyncio.create_task(get_risk_officer_assessment(asset))
+
+    auditor_result, risk_officer_result = await asyncio.gather(auditor_task, risk_officer_task)
+
+    # Arbitrator reads both and makes final call
+    arbitrator_result = await get_arbitrator_consensus(auditor_result, risk_officer_result)
+
+    return combine_results(auditor_result, risk_officer_result, arbitrator_result)
+```
+- **Auditor & Risk Officer run in parallel** (5–10 seconds total)
+- **Arbitrator then reads both** (2–3 seconds)
+- **All three perspectives visible** to investor
+
+### 2. **LLM Diversity**
 ```python
 AI_PERSONALITIES = {
-    "oracle": {
-        "name": "Oracle",
-        "model": "claude-3-sonnet",
-        "style": "data-driven",
-        "confidence_base": 0.68,
-    },
-    "sentinel": {
-        "name": "Sentinel",
-        "model": "gpt-4o",
-        "style": "momentum-based",
-        "confidence_base": 0.60,
-    },
-    ...
+    "auditor": {"model": "claude-opus-4", "temperature": 0.9},
+    "risk_officer": {"model": "gpt-4o-mini", "temperature": 0.6},
+    "arbitrator": {"model": "llama-3.1-70b", "temperature": 0.7},
 }
 ```
-Each personality has a different LLM model, explaining why their reasoning differs.
+Different models → different reasoning styles → trustworthy consensus
 
-### 2. **Real-Time Async Battle Engine**
+### 3. **Graceful Fallback**
+If any API (Anthropic, OpenAI, Groq) fails:
+- System still returns assessment in the agent's style
+- Mock data is labeled clearly
+- No crashes, no 500 errors
+
+### 4. **Type-Safe Pydantic Models**
+All responses validated:
 ```python
-async def resolve_battle(battle_id: str, timeframe: int):
-    # Fetch end price (real CoinGecko data)
-    # Calculate winner (price direction match)
-    # Return BattleResult with explanation
+class RWAAsset(BaseModel):
+    id: str
+    name: str
+    asset_type: str
+    location: str
+    estimated_value: float
+    yield_rate: float
+    description: str
+    risk_factors: list[str]
+
+class AssessmentResult(BaseModel):
+    agent_name: str
+    risk_score: int  # 1-100
+    collateral_ratio: float
+    valuation: float
+    reasoning: str
+    risks: list[str]
+    opportunities: list[str]
 ```
-No blocking calls. Price fetches happen in parallel.
-
-### 3. **Move Smart Contract (Type-Safe Assets)**
-```move
-public fun make_prediction<T>(
-    pool: &mut PredictionPool<T>,
-    direction: u8,
-    coin: Coin<T>,  // Type-safe staking
-    ctx: &mut TxContext,
-)
-```
-Move enforces that coins are real, preventing double-spend. Linear type system prevents use-after-free bugs.
-
-### 4. **Next.js 15 Client-Side State Machine**
-```typescript
-type GameState = "SELECT" | "PREDICT" | "WAITING" | "RESULT"
-```
-Game flows through 4 discrete states. No branching logic. State drives UI.
-
-### 5. **Prompt Engineering for Differentiated AI**
-Each personality gets a different system prompt:
-- Oracle: "You are a technical analyst. Use RSI, support, resistance, fibonacci..."
-- Prophet: "You read on-chain signals and social sentiment. Cite whale activity, MVRV, funding rates..."
-- Sentinel: "You're a momentum trader. Watch volume, MACD, moving averages..."
-
-Same market, same price → different reasoning = different personalities feel **real**.
-
----
-
-## Testing AI Predictions
-
-### To see AI reasoning:
-```bash
-curl -X POST http://localhost:8000/api/predict \
-  -H "Content-Type: application/json" \
-  -d '{"market": "BTC", "direction": "UP", "timeframe": "5m"}'
-```
-
-Response:
-```json
-{
-  "direction": "UP",
-  "confidence": 0.72,
-  "reasoning": "Bitcoin testing support at 42,800. RSI at 55 suggests upside. Predicting UP with 72% confidence.",
-  "model": "claude-3-sonnet"
-}
-```
-
-### To list all personalities:
-```bash
-curl http://localhost:8000/api/personalities
-```
-
----
-
-## Team & Inspiration
-
-### Why This Project?
-1. **AI vs Human is compelling** — Everyone relates to beating AI
-2. **Crypto markets are live** — Real prices, real predictions, high stakes
-3. **OneChain needs GameFi apps** — Prediction markets are critical DeFi primitive
-4. **Showcases multi-layer AI** — Different LLMs, different personalities, same game
-
-### Real-World Use Case
-- **Prediction markets on Polymarket** — $1B+ value, all done with AI
-- **Perpetual exchanges** — Traders use AI signals to manage positions
-- **Market makers** — Use AI to price derivatives
-- **Insurance** — AI predicts tail risk for coverage
-
-OnePredict Arena proves AI can coexist with humans in high-stakes games.
 
 ---
 
 ## What Judges Should Know
 
 ### Strengths
-✨ **Innovative** — AI personality differentiation is novel (not just one LLM)
-✨ **Polished** — UI looks like a real app, not a hackathon project
-✨ **Integrated** — All 5 OneChain products are mentioned/wired
-✨ **Playable** — 2-minute gameplay loop with instant feedback
-✨ **Extensible** — Clear roadmap for tournaments, seasonal rewards, mobile
+✨ **Solves a real problem** — RWA tokenization needs transparent risk assessment
+✨ **Multi-agent approach** — No single LLM bias; transparent debate
+✨ **Integrated with OneChain** — RWA flows naturally into blockchain
+✨ **Production-ready API** — Can be called from frontend, mobile, or other systems
+✨ **Clear reasoning** — Investors see *why* each agent made their call
 
-### Weaknesses (Be Honest)
-🔴 **On-chain integration partial** — Move contracts written but not deployed
-🔴 **No real authentication** — Backend trusts all requests
-🔴 **Mock leaderboard** — Players not persisted, earnings not real
-🔴 **API key dependent** — AI predictions need OpenAI/Anthropic keys
-🔴 **No payment flow** — Staking isn't real (can't lose money)
+### Hackathon Scope (What's Intentionally Simplified)
+🟡 **Frontend not built** — Pure backend API (judges can test via curl/Swagger)
+🟡 **No persistence** — Evaluations aren't saved to DB (easy to add)
+🟡 **No on-chain wiring** — Risk scores don't yet feed to collateral pool (architecture ready)
+🟡 **6 sample assets only** — Enough to demo, but not production scale
+🟡 **Mock fallback if APIs down** — Graceful degradation for demo stability
 
 **Why this is okay for hackathon:**
-- Move contracts *can* be deployed in 1 hour (straightforward)
-- Mock leaderboard proves the UI pattern, real data is SQL query
-- API keys are easy to add (just wire one LLM call)
-- This is a game, not financial instrument (no regulatory risk)
+- Frontend is straightforward React (1–2 days to build)
+- Database persistence is standard SQL (1–2 days)
+- On-chain wiring is the contract skeleton work (already designed)
+- Sample assets prove the concept works
+- Mock fallback ensures judges see the full flow even if API keys missing
 
 ---
 
-## Deployment Instructions (Optional)
-
-### Deploy Backend (Railway or Heroku)
-```bash
-# Add to Railway/Heroku:
-python-3.11
-requirements.txt
-Procfile: "web: uvicorn app:app --host 0.0.0.0 --port $PORT"
-.env with OpenAI/Anthropic keys
-```
-
-### Deploy Frontend (Vercel)
-```bash
-# Connect GitHub repo
-# Vercel auto-deploys on main branch push
-# NEXT_PUBLIC_API_URL env var = backend URL
-```
-
-### Deploy Contracts (OneChain Testnet)
-```bash
-cd contracts
-one move publish --network testnet
-# Note: requires testnet OCT tokens for gas
-```
-
----
-
-## Judge Scoring Rubric Suggestions
+## Judge Scoring Rubric
 
 | Category | What to Look For | Score |
 |---|---|---|
-| **Innovation** | AI personalities are distinct, gameplay is novel | /10 |
-| **Integration** | OneChain products actually used, not just listed | /10 |
-| **Polish** | UI is professional, no console errors | /10 |
-| **Playability** | Game works end-to-end without crashes | /10 |
-| **AI Quality** | Predictions feel smart, reasoning is specific | /10 |
-| **Roadmap** | Clear plan for Phase 2 (tournaments, mobile, etc.) | /10 |
-| **Pitch** | Team explains why this matters for crypto/gaming | /10 |
+| **Innovation** | Multi-agent consensus is novel for RWAs; transparent debate is not standard | /10 |
+| **Integration** | OneChain products naturally integrated (OneRWA, OneWallet, OnePredict) | /10 |
+| **Code Quality** | Type-safe, async, error handling, clean architecture | /10 |
+| **API Design** | Endpoints are clear, responses are well-structured, docs are complete | /10 |
+| **AI Quality** | Each agent reasoning is distinct, specific, not generic | /10 |
+| **Practical Impact** | Solves actual RWA tokenization problem; usable by builders | /10 |
+| **Pitch** | Team explains why this unlocks RWA on OneChain | /10 |
 
 ---
 
 ## Questions to Ask the Team
 
 ### Technical
-1. **How would you scale this to 10k concurrent players?**
-   - *(Expected: Database + Redis, Move contract as source of truth)*
+1. **Why three agents instead of one big model?**
+   - *(Expected: Different perspectives, transparent disagreement, trust through debate)*
 
-2. **What happens if AI prediction API goes down?**
-   - *(Expected: Fallback to random, or game mode without AI)*
+2. **What happens if GPT/Claude API fails mid-evaluation?**
+   - *(Expected: Graceful fallback to mock in same style, or retry logic)*
 
-3. **How do you prevent collusion between player and AI?**
-   - *(Expected: Randomized personality selection, commit-reveal)*
+3. **How would you prevent bad actors from gaming risk scores?**
+   - *(Expected: On-chain history, stake-weighted feedback, reputation system)*
 
-### Business
-1. **What's your monetization model?**
-   - *(Expected: Protocol fee on staked coins, sponsored markets, token rewards)*
+### Product
+1. **Who uses this? RWA protocols? Investors? Banks?**
+   - *(Expected: Clear GTM — e.g., "RWA protocols call API before minting collateral")*
 
-2. **How is this different from Polymarket or Metaculus?**
-   - *(Expected: AI opponent, shorter timeframes, mobile-first, gamification)*
+2. **How is this different from a traditional real estate appraisal?**
+   - *(Expected: Transparent AI reasoning, instant, on-chain verifiable, lower cost)*
 
-3. **Why should OneChain host this vs. Ethereum or Polygon?**
-   - *(Expected: Faster finality, lower fees, Move safety, OnePlay integration)*
+3. **Why would investors trust AI over a certified appraiser?**
+   - *(Expected: Consensus mechanism, on-chain history, appeal process, cost savings)*
 
 ---
 
-## Links & Resources
+## Quick Links
 
 | Resource | Link |
 |----------|------|
-| **GitHub Repo** | `https://github.com/yourusername/onepredict-arena` |
-| **Live Demo** | `http://localhost:3000/arena` |
-| **API Docs** | `http://localhost:8000/docs` |
+| **API Docs (Interactive)** | `http://localhost:8000/docs` |
+| **Assets List** | `http://localhost:8000/api/assets` |
+| **Sample Evaluation** | `curl -X POST http://localhost:8000/api/evaluate?asset_id=medellin-tech-hub` |
 | **Move Docs** | `https://docs.sui.io/guide/move` |
 | **OneChain Docs** | `https://docs.onechain.io` |
 | **Hackathon** | `https://dorahacks.io/hackathon/onehackathon` |
@@ -383,17 +318,23 @@ one move publish --network testnet
 
 ## Final Thoughts
 
-**OnePredict Arena** is a **demonstration of how AI can power engaging crypto games** on OneChain.
+**OneConsensus** is a **proof-of-concept for transparent RWA risk assessment**.
 
-It's not just a prediction market — it's a **competitive gaming experience** where:
-- Humans challenge AI personalities
-- Each AI has distinct reasoning
-- Real prices, real rewards, real blockchain
+The judges should see:
+- **Three AI agents with real disagreement** — Auditor bullish, Risk Officer cautious, Arbitrator deciding
+- **Specific, reasoned assessments** — Not generic, but grounded in RWA fundamentals
+- **OneChain integration** — Natural fit for RWA tokenization pipeline
+- **Production-ready API** — Can power real investor dashboards and RWA protocols
 
-The judges should see a **polished, playable game** that proves OneChain can host sophisticated GameFi applications.
+This is the **first system** that brings multi-agent consensus to RWA valuation. It proves transparent, debatable AI risk assessment is possible on blockchain.
 
 ---
 
-**Questions?** Check the backend logs or ask the team on Discord/Twitter.
+**Questions?** Check the backend logs: `python app.py`
 
-**Good luck, judges! 🎮⚡**
+**Try it:**
+```bash
+curl -X POST "http://localhost:8000/api/evaluate?asset_id=lagos-solar-farm"
+```
+
+**Good luck, judges! 🚀💡**
