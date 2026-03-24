@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react"
 import { MARKETS } from "@/lib/constants"
 import { fetchPrice, PriceData } from "@/lib/api"
+import { PriceSkeletonLoader } from "@/components/SkeletonLoader"
 import clsx from "clsx"
 
 interface MarketSelectorProps {
@@ -41,6 +42,9 @@ export default function MarketSelector({
   return (
     <div>
       <h2 className="mb-6 text-2xl font-bold">Select a Market</h2>
+      {loading ? (
+        <PriceSkeletonLoader />
+      ) : (
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
         {MARKETS.map((market) => {
           const priceData = prices[market.id]
@@ -124,6 +128,7 @@ export default function MarketSelector({
           )
         })}
       </div>
+      )}
     </div>
   )
 }

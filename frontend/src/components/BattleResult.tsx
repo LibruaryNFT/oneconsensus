@@ -18,7 +18,16 @@ export default function BattleResult({
   onPlayAgain,
 }: BattleResultProps) {
   const [displayedReward, setDisplayedReward] = useState(0)
+  const [showFlash, setShowFlash] = useState(true)
   const rewardAmount = result.playerWon ? 50 : 0
+
+  useEffect(() => {
+    // Flash effect on result mount
+    if (showFlash) {
+      const timer = setTimeout(() => setShowFlash(false), 600)
+      return () => clearTimeout(timer)
+    }
+  }, [showFlash])
 
   useEffect(() => {
     if (result.playerWon && displayedReward < rewardAmount) {
@@ -54,20 +63,28 @@ export default function BattleResult({
     ((result.endPrice - result.startPrice) / result.startPrice) * 100
 
   return (
-    <div className={`fixed inset-0 z-50 flex items-center justify-center bg-black/80 p-4 backdrop-blur-sm ${result.playerWon ? "" : "animate-shake"}`}>
+    <div className={`fixed inset-0 z-50 flex items-center justify-center bg-black/80 p-4 backdrop-blur-sm overflow-y-auto ${result.playerWon ? "" : "animate-shake"}`}>
+      {/* Flash overlay */}
+      {showFlash && (
+        <div
+          className={`fixed inset-0 pointer-events-none ${
+            result.playerWon ? "animate-flash-green" : "animate-flash-red"
+          }`}
+        />
+      )}
       <div
         className={clsx(
-          "w-full max-w-2xl rounded-2xl border bg-card p-8 shadow-2xl transition-all duration-500",
+          "w-full max-w-2xl rounded-2xl border bg-card p-6 sm:p-8 shadow-2xl transition-all duration-500 my-auto",
           result.playerWon
             ? "border-green-500/50 shadow-green-500/30 animate-fade-in"
             : "border-red-500/50 shadow-red-500/30"
         )}
       >
         {/* Result headline with dramatic styling */}
-        <div className="mb-8 text-center">
+        <div className="mb-6 sm:mb-8 text-center">
           <h1
             className={clsx(
-              "text-6xl font-bold mb-2 animate-fade-in",
+              "text-5xl sm:text-6xl font-bold mb-2 animate-fade-in",
               result.playerWon
                 ? "bg-gradient-to-r from-green-400 via-emerald-500 to-green-600 bg-clip-text text-transparent drop-shadow-lg"
                 : "bg-gradient-to-r from-red-400 via-orange-500 to-red-600 bg-clip-text text-transparent drop-shadow-lg"
@@ -138,7 +155,7 @@ export default function BattleResult({
         </div>
 
         {/* Predictions comparison */}
-        <div className="mb-8 grid grid-cols-2 gap-4">
+        <div className="mb-6 sm:mb-8 grid grid-cols-1 sm:grid-cols-2 gap-4">
           {/* Player prediction */}
           <div
             className={clsx(

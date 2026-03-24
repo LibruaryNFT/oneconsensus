@@ -7,6 +7,7 @@ import AIOpponentCard from "@/components/AIOpponentCard"
 import PredictionPanel from "@/components/PredictionPanel"
 import CountdownTimer from "@/components/CountdownTimer"
 import BattleResult from "@/components/BattleResult"
+import QuickBattlePresets from "@/components/QuickBattlePresets"
 import { fetchPrice, PredictionResponse, GameResult, createBattle, resolveBattle } from "@/lib/api"
 
 type GameState = "SELECT" | "PREDICT" | "WAITING" | "RESULT"
@@ -97,12 +98,24 @@ export default function ArenaPage() {
     }
   }
 
+  // Handle quick preset selection
+  const handleQuickPreset = (market: string, opponent: string) => {
+    setSelectedMarket(market)
+    setSelectedOpponent(opponent)
+    // Automatically start prediction with preset
+    setTimeout(async () => {
+      const priceData = await fetchPrice(market)
+      setStartPrice(priceData.price)
+      setGameState("PREDICT")
+    }, 100)
+  }
+
   return (
-    <div className="mx-auto min-h-[calc(100vh-80px)] max-w-6xl px-4 py-8 sm:px-6 lg:px-8">
+    <div className="mx-auto min-h-[calc(100vh-80px)] max-w-6xl px-4 py-6 sm:py-8 sm:px-6 lg:px-8">
       {/* Page title */}
-      <div className="mb-12 text-center">
-        <h1 className="text-4xl font-bold gradient-text">🎮 OnePredict Arena</h1>
-        <p className="mt-2 text-lg text-muted-foreground">
+      <div className="mb-8 sm:mb-12 text-center">
+        <h1 className="text-3xl sm:text-4xl font-bold gradient-text">🎮 OnePredict Arena</h1>
+        <p className="mt-2 text-base sm:text-lg text-muted-foreground">
           Battle AI opponents and prove your prediction prowess
         </p>
       </div>
@@ -127,6 +140,14 @@ export default function ArenaPage() {
       {/* SELECT STATE */}
       {gameState === "SELECT" && (
         <div className="space-y-12">
+          {/* Quick Battle Presets */}
+          <QuickBattlePresets
+            onSelectPreset={handleQuickPreset}
+            disabled={false}
+          />
+
+          <div className="h-px bg-gradient-to-r from-transparent via-border to-transparent" />
+
           <MarketSelector
             selectedMarket={selectedMarket}
             onSelectMarket={handleSelectMarket}

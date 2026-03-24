@@ -1,5 +1,6 @@
 import HeroSection from "@/components/HeroSection"
 import FeatureCard from "@/components/FeatureCard"
+import RecentBattlesFeed from "@/components/RecentBattlesFeed"
 import Link from "next/link"
 import { Zap, TrendingUp, Trophy, Sparkles } from "lucide-react"
 
@@ -8,6 +9,9 @@ export default function Home() {
     <div className="space-y-20 py-12">
       {/* Hero Section */}
       <HeroSection />
+
+      {/* Recent Battles Feed */}
+      <RecentBattlesFeed />
 
       {/* Features Section */}
       <section className="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8">

@@ -30,8 +30,8 @@ export default function CountdownTimer({
   const offset = circumference - (remaining / duration) * circumference
 
   return (
-    <div className="flex flex-col items-center justify-center animate-fade-in">
-      <div className="relative h-40 w-40">
+    <div className="flex flex-col items-center justify-center animate-fade-in px-4">
+      <div className="relative h-40 w-40 sm:h-48 sm:w-48">
         <svg className="absolute inset-0 h-full w-full" viewBox="0 0 100 100">
           {/* Background circle */}
           <circle
@@ -64,19 +64,19 @@ export default function CountdownTimer({
 
         {/* Center text with glow */}
         <div className="absolute inset-0 flex flex-col items-center justify-center">
-          <div className="text-6xl font-bold text-primary animate-pulse">
+          <div className="text-5xl sm:text-6xl font-bold text-primary animate-pulse">
             {remaining}
           </div>
-          <div className="text-sm text-muted-foreground">seconds</div>
+          <div className="text-xs sm:text-sm text-muted-foreground">seconds</div>
         </div>
       </div>
 
       {/* Status message */}
-      <div className="mt-8 text-center">
-        <p className="text-lg text-muted-foreground mb-2">
+      <div className="mt-6 sm:mt-8 text-center">
+        <p className="text-base sm:text-lg text-muted-foreground mb-2">
           ⚔️ Battle in progress...
         </p>
-        <p className="text-sm text-muted-foreground">
+        <p className="text-xs sm:text-sm text-muted-foreground">
           Resolving prediction in {remaining} seconds
         </p>
       </div>

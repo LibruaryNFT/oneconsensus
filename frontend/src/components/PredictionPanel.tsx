@@ -78,12 +78,12 @@ export default function PredictionPanel({
       </div>
 
       {/* Prediction buttons */}
-      <div className="mb-8 grid grid-cols-3 gap-4">
+      <div className="mb-8 grid grid-cols-3 gap-2 sm:gap-4">
         <button
           onClick={() => handlePredictionClick("UP")}
           disabled={playerPrediction !== null || loading}
           className={clsx(
-            "group relative overflow-hidden rounded-xl border-2 py-8 font-bold transition-all duration-300",
+            "group relative overflow-hidden rounded-xl border-2 py-6 sm:py-8 font-bold transition-all duration-300",
             playerPrediction === "UP"
               ? "border-green-500 bg-green-950/30 shadow-lg shadow-green-500/30"
               : playerPrediction
@@ -101,7 +101,7 @@ export default function PredictionPanel({
           onClick={() => handlePredictionClick("FLAT")}
           disabled={playerPrediction !== null || loading}
           className={clsx(
-            "group relative overflow-hidden rounded-xl border-2 py-8 font-bold transition-all duration-300",
+            "group relative overflow-hidden rounded-xl border-2 py-6 sm:py-8 font-bold transition-all duration-300",
             playerPrediction === "FLAT"
               ? "border-yellow-500 bg-yellow-950/30 shadow-lg shadow-yellow-500/30"
               : playerPrediction
@@ -119,7 +119,7 @@ export default function PredictionPanel({
           onClick={() => handlePredictionClick("DOWN")}
           disabled={playerPrediction !== null || loading}
           className={clsx(
-            "group relative overflow-hidden rounded-xl border-2 py-8 font-bold transition-all duration-300",
+            "group relative overflow-hidden rounded-xl border-2 py-6 sm:py-8 font-bold transition-all duration-300",
             playerPrediction === "DOWN"
               ? "border-red-500 bg-red-950/30 shadow-lg shadow-red-500/30"
               : playerPrediction
@@ -142,7 +142,7 @@ export default function PredictionPanel({
           </h3>
 
           {loading ? (
-            <div className="space-y-3">
+            <div className="space-y-4">
               <div className="flex items-center gap-3">
                 <div className="flex gap-1">
                   <div className="h-2 w-2 animate-bounce rounded-full bg-primary" />
@@ -155,10 +155,13 @@ export default function PredictionPanel({
                     style={{ animationDelay: "0.2s" }}
                   />
                 </div>
-                <span className="text-sm text-muted-foreground">
-                  Processing market data...
+                <span className="text-sm font-semibold text-primary">
+                  AI is analyzing your move...
                 </span>
               </div>
+              <p className="text-xs text-muted-foreground">
+                Evaluating market signals • Processing sentiment data • Calculating probability
+              </p>
             </div>
           ) : aiResponse ? (
             <div className="space-y-4">

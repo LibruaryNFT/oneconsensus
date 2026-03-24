@@ -164,3 +164,64 @@ a {
 .glass-card-sm {
   @apply rounded-lg border border-white/10 bg-white/5 backdrop-blur-xl p-4;
 }
+
+/* Screen flash animations */
+@keyframes flash-green {
+  0% {
+    background-color: transparent;
+  }
+  50% {
+    background-color: rgba(34, 197, 94, 0.2);
+  }
+  100% {
+    background-color: transparent;
+  }
+}
+
+@keyframes flash-red {
+  0% {
+    background-color: transparent;
+  }
+  50% {
+    background-color: rgba(239, 68, 68, 0.2);
+  }
+  100% {
+    background-color: transparent;
+  }
+}
+
+@keyframes scroll-left {
+  0% {
+    transform: translateX(0);
+  }
+  100% {
+    transform: translateX(-100%);
+  }
+}
+
+@keyframes skeleton-loading {
+  0% {
+    background-position: -1000px 0;
+  }
+  100% {
+    background-position: 1000px 0;
+  }
+}
+
+.animate-flash-green {
+  animation: flash-green 0.6s ease-out;
+}
+
+.animate-flash-red {
+  animation: flash-red 0.6s ease-out;
+}
+
+.animate-scroll-left {
+  animation: scroll-left 20s linear infinite;
+}
+
+.skeleton-loading {
+  background: linear-gradient(90deg, hsl(var(--input)) 25%, hsl(var(--border)) 50%, hsl(var(--input)) 75%);
+  background-size: 1000px 100%;
+  animation: skeleton-loading 2s infinite;
+}
