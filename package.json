@@ -1,0 +1,6 @@
+{
+  "dependencies": {
+    "@onelabs/bcs": "^1.6.0",
+    "@onelabs/sui": "^1.26.2"
+  }
+}

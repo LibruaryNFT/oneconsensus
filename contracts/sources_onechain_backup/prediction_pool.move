@@ -1,11 +1,11 @@
 module one_predict_arena::prediction_pool;
 
-use sui::object::{Self, UID, ID};
-use sui::coin::Coin;
-use sui::balance::{Self, Balance};
-use sui::transfer;
-use sui::tx_context::TxContext;
-use sui::event;
+use one::object::{Self, UID, ID};
+use one::coin::Coin;
+use one::balance::Balance;
+use one::transfer;
+use one::tx_context::TxContext;
+use one::event;
 use std::string::String;
 
 const E_INVALID_POOL: u64 = 100;
@@ -82,7 +82,7 @@ public fun create_pool<T>(
         start_time: 0,
         duration,
         status: 0, // open
-        pool_balance: balance::zero(),
+        pool_balance: Balance::zero(),
         total_predictions: 0,
     };
 
