@@ -30,12 +30,14 @@ public struct ResultRecorded has copy, drop {
     new_losses: u64,
 }
 
-public fun create_leaderboard(ctx: &mut TxContext): Leaderboard {
-    Leaderboard {
+/// Create and share a leaderboard (entry function for CLI/frontend)
+entry fun create_and_share_leaderboard(ctx: &mut TxContext) {
+    let leaderboard = Leaderboard {
         id: object::new(ctx),
         players: table::new(ctx),
         total_players: 0,
-    }
+    };
+    transfer::share_object(leaderboard);
 }
 
 public fun record_result(

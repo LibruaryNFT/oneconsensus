@@ -7,9 +7,9 @@ chain-id = "e9eed8f1"
 
 [[published]]
 source = { local = '\\?\C:\Code\one-predict-arena\contracts' }
-published-at = "0xbeb5488b9fa9fc5b8dbb49d0333cdb9aa3c900d6c019f335dd6e484639f3dffe"
-original-id = "0xbeb5488b9fa9fc5b8dbb49d0333cdb9aa3c900d6c019f335dd6e484639f3dffe"
+published-at = "0x26d719545b6539f56d4084275972a1eaa437ad56426bd02b3dbb9dfa1c72007a"
+original-id = "0x26d719545b6539f56d4084275972a1eaa437ad56426bd02b3dbb9dfa1c72007a"
 version = 1
 toolchain-version = "1.68.1"
 build-config = { flavor = "sui", edition = "2024" }
-upgrade-capability = "0x5e0a526c2adb95dd4410bf19df312030ad5c23045bcce1b46400739c252ff707"
+upgrade-capability = "0x6497a90b6f7d7f67dc50a17342963c0a481db9fd2b9f55d275d988d54a26c352"
