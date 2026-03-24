@@ -7,24 +7,24 @@ import "./globals.css"
 const inter = Inter({ subsets: ["latin"] })
 
 export const metadata: Metadata = {
-  title: "OnePredict Arena - Battle AI, Predict the Future",
+  title: "OneConsensus - AI-Powered RWA Risk Assessment",
   description:
-    "An AI prediction battle game on OneChain. Compete with other predictors, win rewards, and prove your foresight.",
+    "Three sovereign AI agents debate, analyze, and reach consensus on real-world asset risk. Institutional-grade risk intelligence verified on-chain.",
   keywords: [
-    "prediction",
-    "AI",
-    "game",
-    "OneChain",
-    "crypto",
-    "trading",
-    "competition",
+    "RWA",
+    "risk assessment",
+    "AI consensus",
+    "real-world assets",
+    "blockchain",
+    "tokenization",
+    "risk management",
   ],
-  authors: [{ name: "OnePredict" }],
+  authors: [{ name: "OneConsensus" }],
   openGraph: {
     type: "website",
     locale: "en_US",
-    url: "https://onepredict.io",
-    siteName: "OnePredict Arena",
+    url: "https://oneconsensus.io",
+    siteName: "OneConsensus",
   },
 }
 

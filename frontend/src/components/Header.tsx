@@ -1,7 +1,7 @@
 "use client"
 
 import Link from "next/link"
-import { Zap } from "lucide-react"
+import { Scale } from "lucide-react"
 import { usePathname } from "next/navigation"
 import { useEffect, useState } from "react"
 import WalletButton from "./WalletButton"
@@ -22,9 +22,9 @@ export default function Header() {
 
   const navLinks = [
     { href: "/", label: "Home" },
-    { href: "/arena", label: "Arena" },
-    { href: "/leaderboard", label: "Leaderboard" },
-    { href: "/profile", label: "Profile" },
+    { href: "/arena", label: "Evaluate" },
+    { href: "/leaderboard", label: "Agents" },
+    { href: "/profile", label: "History" },
   ]
 
   return (
@@ -38,11 +38,11 @@ export default function Header() {
       <nav className="mx-auto flex max-w-6xl items-center justify-between px-4 py-4 sm:px-6 lg:px-8">
         {/* Logo with animation */}
         <Link href="/" className="flex items-center gap-2 group">
-          <div className="rounded-lg bg-gradient-to-r from-primary to-primary-dark p-2 group-hover:shadow-lg group-hover:shadow-primary/50 transition-all">
-            <Zap className="h-6 w-6 text-primary-foreground" />
+          <div className="rounded-lg bg-gradient-to-r from-amber-600 to-amber-700 p-2 group-hover:shadow-lg group-hover:shadow-amber-500/50 transition-all">
+            <Scale className="h-6 w-6 text-white" />
           </div>
-          <span className="text-xl font-bold gradient-text group-hover:opacity-80 transition-opacity">
-            OnePredict Arena
+          <span className="text-xl font-bold bg-gradient-to-r from-amber-400 to-amber-600 bg-clip-text text-transparent group-hover:opacity-80 transition-opacity">
+            OneConsensus
           </span>
         </Link>
 
@@ -54,13 +54,13 @@ export default function Header() {
               href={link.href}
               className={`relative text-sm font-medium transition-colors duration-200 ${
                 isActive(link.href)
-                  ? "text-primary"
-                  : "text-muted-foreground hover:text-primary"
+                  ? "text-amber-400"
+                  : "text-muted-foreground hover:text-amber-400"
               }`}
             >
               {link.label}
               {isActive(link.href) && (
-                <div className="absolute -bottom-1 left-0 right-0 h-0.5 bg-gradient-to-r from-primary to-transparent" />
+                <div className="absolute -bottom-1 left-0 right-0 h-0.5 bg-gradient-to-r from-amber-400 to-transparent" />
               )}
             </Link>
           ))}

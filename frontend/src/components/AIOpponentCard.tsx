@@ -1,93 +1,92 @@
 "use client"
 
-import { AI_PERSONALITIES } from "@/lib/constants"
+import { AI_AGENTS } from "@/lib/constants"
 import clsx from "clsx"
 
 interface AIOpponentCardProps {
   selectedOpponent: string | null
-  onSelectOpponent: (personalityId: string) => void
+  onSelectOpponent: (agentId: string) => void
 }
 
 export default function AIOpponentCard({
   selectedOpponent,
   onSelectOpponent,
 }: AIOpponentCardProps) {
-  // Mock win rates for demo
-  const getWinRate = (id: string): number => {
-    const rates: Record<string, number> = {
-      oracle: 58,
-      sentinel: 55,
-      prophet: 61,
-      cipher: 52,
+  // Mock accuracy scores for demo
+  const getAccuracyScore = (id: string): number => {
+    const scores: Record<string, number> = {
+      auditor: 78,
+      risk_officer: 82,
+      arbitrator: 91,
     }
-    return rates[id] || 50
+    return scores[id] || 80
   }
 
   return (
     <div>
-      <h2 className="mb-6 text-2xl font-bold">Choose Your Opponent</h2>
-      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
-        {AI_PERSONALITIES.map((personality) => {
-          const isSelected = selectedOpponent === personality.id
-          const winRate = getWinRate(personality.id)
+      <h2 className="mb-6 text-2xl font-bold">Choose an Agent</h2>
+      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
+        {AI_AGENTS.map((agent) => {
+          const isSelected = selectedOpponent === agent.id
+          const accuracy = getAccuracyScore(agent.id)
 
           return (
             <button
-              key={personality.id}
-              onClick={() => onSelectOpponent(personality.id)}
+              key={agent.id}
+              onClick={() => onSelectOpponent(agent.id)}
               className={clsx(
                 "group relative overflow-hidden rounded-xl border-2 p-6 transition-all duration-300",
                 isSelected
-                  ? "border-primary bg-amber-950/20 shadow-lg shadow-primary/30"
-                  : "border-border bg-card hover:border-primary/50 hover:shadow-md"
+                  ? "border-amber-400 bg-amber-950/20 shadow-lg shadow-amber-500/30"
+                  : "border-border bg-card hover:border-amber-400/50 hover:shadow-md"
               )}
             >
               {/* Gradient background */}
               <div
                 className={clsx(
-                  "absolute inset-0 bg-gradient-to-br from-primary/10 to-transparent opacity-0 transition-opacity duration-300",
+                  "absolute inset-0 bg-gradient-to-br from-amber-500/10 to-transparent opacity-0 transition-opacity duration-300",
                   isSelected && "opacity-100"
                 )}
               />
 
               <div className="relative z-10">
                 {/* Avatar emoji */}
-                <div className="mb-3 text-5xl">{personality.avatar}</div>
+                <div className="mb-3 text-5xl">{agent.avatar}</div>
 
                 {/* Name */}
                 <h3 className="text-lg font-bold text-foreground">
-                  {personality.name}
+                  {agent.name}
                 </h3>
 
-                {/* Style */}
-                <p className="text-xs font-semibold uppercase text-primary">
-                  {personality.style}
+                {/* Role */}
+                <p className="text-xs font-semibold uppercase text-amber-400">
+                  {agent.role}
                 </p>
 
                 {/* Description */}
                 <p className="mt-3 text-sm text-muted-foreground">
-                  {personality.description}
+                  {agent.description}
                 </p>
 
-                {/* Win rate */}
+                {/* Accuracy Score */}
                 <div className="mt-4 flex items-center gap-2">
                   <div className="flex-1 overflow-hidden rounded-full bg-border">
                     <div
-                      className="h-2 bg-gradient-to-r from-primary to-amber-400"
-                      style={{ width: `${winRate}%` }}
+                      className="h-2 bg-gradient-to-r from-amber-500 to-amber-400"
+                      style={{ width: `${accuracy}%` }}
                     />
                   </div>
                   <span className="text-sm font-semibold text-muted-foreground">
-                    {winRate}%
+                    {accuracy}%
                   </span>
                 </div>
 
                 {/* Selection indicator */}
                 {isSelected && (
                   <div className="absolute right-4 top-4">
-                    <div className="flex h-6 w-6 items-center justify-center rounded-full bg-primary">
+                    <div className="flex h-6 w-6 items-center justify-center rounded-full bg-amber-400">
                       <svg
-                        className="h-4 w-4 text-primary-foreground"
+                        className="h-4 w-4 text-foreground"
                         fill="currentColor"
                         viewBox="0 0 20 20"
                       >
