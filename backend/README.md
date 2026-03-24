@@ -1,8 +1,11 @@
-# OneConsensus — RWA Risk Assessment Platform
+# OneConsensus — Backend API
 
-AI-powered platform where three AI agents (The Auditor, The Risk Officer, and The Arbitrator) debate and reach consensus on real-world asset (RWA) risk, valuation, and collateral requirements.
+AI-powered RWA risk assessment. Three AI agents debate and reach consensus on asset risk, collateral ratios, and valuations.
 
-**Powered by**: Claude (Anthropic), GPT-4o-mini (OpenAI), and Llama 3.1 (Groq)
+**Agents:**
+- **The Auditor** (Claude Opus) — Yield-focused, growth-oriented
+- **The Risk Officer** (GPT-4o-mini) — Risk-focused, prudent
+- **The Arbitrator** (Llama 3.1 70B) — Balanced synthesis
 
 ## Status: FULLY FUNCTIONAL ✓
 

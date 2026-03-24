@@ -1,253 +1,205 @@
-# OnePredict Arena — 90-Second Demo Video Script
+# OneConsensus — 90-Second Demo Video Script
 
 ## Setting
 
-- **Device:** Laptop/tablet screen visible
-- **Audio:** Clear, enthusiastic narration (2–3 speakers for dialog optional)
-- **Music:** Upbeat, modern (lofi/synthwave style)
-- **Title card:** "OnePredict Arena — AI vs Human Prediction Battles" (2 sec)
+- **Device:** Laptop/tablet screen visible, split-screen or scrolling
+- **Audio:** Clear, professional narration (calm but engaging)
+- **Music:** Sophisticated, modern (ambient/tech style)
+- **Title card:** "OneConsensus — AI Risk Intelligence for RWAs" (2 sec)
 
 ---
 
 ## Script & Timeline
 
-### [0:00–0:05] Opening Hook
+### [0:00–0:15] Opening Hook
 **NARRATOR:**
-"Ever wanted to **outsmart AI at its own game?**
+"What if three AI agents could **debate and reach consensus** on the value of a real asset — instantly, on-chain?"
 
-*[Show animated title card with market icons]*
+*[Show animated title card with RWA icons: building, sun (solar), ship, vault]*
 
-Welcome to **OnePredict Arena** — where you predict crypto prices against AI opponents... and earn rewards on OneChain."
+"Welcome to **OneConsensus** — where AI evaluates real-world assets and blockchain verifies the result."
 
 ---
 
-### [0:05–0:15] Wallet Connection
+### [0:15–0:30] Landing Page & Asset Selection
 **NARRATOR:**
-"First, connect your OneWallet."
+"Let's evaluate a real asset. Here are six examples: commercial real estate, solar farms, cargo ships, agricultural land, residential property, and precious metals."
 
 *[ACTIONS:]*
-- Click "Connect Wallet" button (top right)
-- Wallet popup appears
-- Show wallet address truncated (0x1234...5678)
-- Success message: "🎯 Wallet connected!"
+- Show dashboard with 6 asset cards
+- Asset icons: building 🏢, sun ☀️, ship ⛴️, farm 🌾, condo 🏠, vault 🏦
+- Each card shows: Name, Type, Location, Value ($1.8M–$12M), Yield (3–11%)
+- Mouse hover shows brief description
 
 **NARRATOR:**
-"Now you're ready to battle. Choose a market — Bitcoin, Ethereum, Solana, or Flow."
+"Let's evaluate the **Medellin Tech Hub** — a $2.4 million commercial property with 7.2% annual yield."
+
+*[ACTIONS:]*
+- Click **Medellin Tech Hub** card
+- Card highlights with blue border
+- Details panel expands below
 
 ---
 
-### [0:15–0:25] Market & Opponent Selection
+### [0:30–0:50] Triggering Evaluation
 **NARRATOR:**
-"Pick your crypto market. Bitcoin's on an uptrend, but will it continue?"
+"Now we click **Evaluate**. Behind the scenes, three AI agents spring into action — each with a different perspective."
 
 *[ACTIONS:]*
-- Scroll through market cards (BTC, ETH, SOL, FLOW with icons)
-- Click **Bitcoin (BTC)** card (highlight in blue)
-- Card expands: "Bitcoin price prediction"
-- Current price shown: "$42,850 USD"
+- Click large "Evaluate" button
+- Button animates, shows loading spinner
+- Text appears: "The Auditor is analyzing...", "The Risk Officer is reviewing..."
+- Parallel animation showing two agents working side-by-side (5–10 seconds)
 
 **NARRATOR:**
-"Next, pick your AI opponent. Choose from **Oracle** — the data-driven analyst, **Sentinel** — momentum tracker, **Prophet** — sentiment reader, or **Cipher** — volatility specialist."
-
-*[ACTIONS:]*
-- Show AI opponent cards with avatars:
-  - 🔮 Oracle (blue)
-  - 🛡️ Sentinel (red)
-  - 📈 Prophet (green)
-  - ⚡ Cipher (yellow)
-- Hover over each showing description
-- Click **Oracle** (glowing highlight)
-
-**NARRATOR:**
-"I'll challenge Oracle — the smartest player on this one."
+"The **Auditor** sees growth potential and low risk. The **Risk Officer** is more cautious, spotting regulatory and market risks. They evaluate in parallel for speed."
 
 ---
 
-### [0:25–0:35] Making the Prediction
+### [0:50–1:15] Consensus Display (The Core)
 **NARRATOR:**
-"Now the game begins. You and AI both make predictions simultaneously. Will Bitcoin go **UP**, **DOWN**, or stay **FLAT**?"
+"Here's the debate. **Three panels** — one for each agent."
 
 *[ACTIONS:]*
-- Click "Start Battle ⚔️" button
-- Screen transitions to prediction panel
-- Show Bitcoin's current price prominently: "$42,850"
-- Show 3 prediction buttons: 📈 UP (green), 📉 DOWN (red), ➡️ FLAT (yellow)
+- Screen splits into 3 vertical panels (left: Auditor, middle: Risk Officer, right: Arbitrator)
+- Each panel shows:
+  - Agent name + icon
+  - Risk score: Auditor ~32 (green), Risk Officer ~58 (red), Arbitrator ~45 (orange)
+  - Collateral ratio: Auditor 112%, Risk Officer 145%, Arbitrator 128%
+  - Key reasoning snippet visible (1–2 sentences)
 
 **NARRATOR:**
-"I see bullish signals. I'm predicting **UP**."
+"The **Auditor** assigns a risk score of 32 — bullish. Collateral requirement: only 112%. Their view: strong tenant base, inflation-linked rents, good location."
 
-*[ACTIONS:]*
-- Click **UP** button
-- Button animates with checkmark
-- System shows: "Your prediction: UP ✓"
-- AI reasoning appears below in a card:
+*[Pause 1 sec — highlight left panel]*
 
-```
-🔮 Oracle's Analysis:
-"Bitcoin showing consolidation near support.
-RSI at 55 suggests room for upward movement.
-Predicting UP with 72% confidence."
-```
+"The **Risk Officer** is more cautious. Risk score: 58. Collateral requirement: 145%. They flag geopolitical volatility, tax policy risk in Colombia, market uncertainty."
+
+*[Pause 1 sec — highlight middle panel]*
+
+"The **Arbitrator** synthesizes both. Risk score: 45. Collateral requirement: 128%. They say: 'Balancing yield opportunity with prudent risk management.'"
+
+*[Pause 1 sec — highlight right panel]*
+
+**NARRATOR:**
+"This is the power of consensus. You see the *entire debate*, not just a final number."
 
 ---
 
-### [0:35–0:50] Battle Countdown
+### [1:15–1:45] Consensus Results & Recommendation
 **NARRATOR:**
-"The battle is live. You have **60 seconds** to wait. Will the price move in your favor? Will AI be right? Let's find out."
+"Here's the final consensus."
 
 *[ACTIONS:]*
-- Large countdown timer visible: "60", "59", "58"... ticking down
-- Background animation (subtle price chart ticker)
-- Show current price updating in real-time:
-  - Starts at "$42,850"
-  - Fluctuates: "$42,860", "$42,835", "$42,875"
-  - Red/green candle animations
-- Floating text: "🎯 Battle in progress..."
-- Soft timer beeping every 10 seconds
+- 3-panel view folds/animates into single result card
+- Display final metrics:
+  - **Final Risk Score:** 45 / 100 (visual progress bar)
+  - **Final Collateral Ratio:** 128% (with explanation)
+  - **Final Valuation:** $2.4M (consensus across all three)
+  - **Debate Summary:** "Auditor and Risk Officer disagreed on collateral by 33 percentage points. Arbitrator set 128% as compromise."
+  - **Recommendation:** 🟢 **BUY** (green banner)
 
 **NARRATOR:**
-"The market is moving. Bitcoin climbed to $42,875 in the first 20 seconds..."
+"Risk score: 45 out of 100 — moderate. Collateral: 128% — meaning for every dollar of asset value, you need $1.28 of collateral. Recommendation: **BUY**."
 
 *[ACTIONS:]*
-- At 30-second mark, show price flash: "$42,875" (up $25)
+- Optional: Show "View Full Assessment" button
+- If clicked, expand to show all three agents' full reasoning
 
 **NARRATOR:**
-"...and now it's hovering. Will it hold the gain? 10 seconds left..."
-
-*[ACTIONS:]*
-- At 50-second mark, countdown goes: "10... 9... 8..."
-- Screen intensifies with red/green color pulse
+"This consensus is now recorded on OneChain, creating an immutable record. RWA protocols use this data to mint tokenized assets safely."
 
 ---
 
-### [0:50–0:75] Battle Results
+### [1:45–2:00] OneChain Integration & Close
 **NARRATOR:**
-"Time's up! Let's see the result..."
+"All powered by **OneChain** — transparent, verifiable, on-chain."
 
 *[ACTIONS:]*
-- Countdown hits "0" with satisfying **BONG** sound
-- Screen explodes to "RESULTS" card
-- Display outcome:
-
-```
-🏆 YOU WIN! 🏆
-
-Your Prediction:    UP  ✓
-Oracle's Prediction: UP  ✓
-Actual Direction:    UP  ✓
-
-Price Moved: $42,850 → $42,912 (+$62, +0.14%)
-
-You Earned: 2.5 OCT Tokens  💎
-```
-
-- Confetti animation (light, not excessive)
-- Player ranking updated:
-  - "Rank: 1,247 → 1,203"
-  - "Win Streak: 0 → 1"
+- Flash icons: OneRWA, OneWallet, OnePredict, OneID
+- Show "Consensus verified on-chain" badge
+- Final title card: "OneConsensus"
+- Subtitle: "AI Consensus for Real-World Assets"
+- Website/Discord handles fade in
 
 **NARRATOR:**
-"🎉 **You got it right.** Bitcoin went up. Oracle also predicted up. But here's the twist — **you beat the AI**, so you earned the rewards! You just claimed **2.5 OneChain tokens** to your wallet."
+"Built for **OneHack 3.0** — The AI & GameFi hackathon. **OneConsensus: Where AI debate becomes blockchain truth.**"
 
-*[ACTIONS:]*
-- Show wallet balance update (optional): "+2.5 OCT"
-- Button at bottom: "Play Again" highlighted
-
----
-
-### [0:75–0:85] Leaderboard
-**NARRATOR:**
-"Track your progress on the **global leaderboard**."
-
-*[ACTIONS:]*
-- Click "Leaderboard" tab
-- Show top 10 players:
-  1. CryptoMaster — 156 wins (86.7% win rate)
-  2. TrendFollower — 142 wins (82.1% win rate)
-  3. SafeHands — 135 wins (78.5% win rate)
-  ... (scroll slightly)
-- Highlight "You" at position #1,203 with green badge
-
-**NARRATOR:**
-"Climb the rankings, build your streak, and dominate the arena. Every prediction is a chance to prove you're smarter than AI."
-
----
-
-### [0:85–0:90] OneChain Integration
-**NARRATOR:**
-"All powered by **OneChain** — with real blockchain rewards, real wallet integration, and real competition."
-
-*[ACTIONS:]*
-- Show icons flash:
-  - 💳 OneWallet (authentication)
-  - 🏦 OnePredict (prediction pools)
-  - 📊 OneDEX (price feeds)
-  - 🎮 OnePlay (gamification)
-
----
-
-### [0:90–0:95] Call to Action
-**NARRATOR:**
-"Ready to challenge AI? Ready to earn? **Join OnePredict Arena.**"
-
-*[ACTIONS:]*
-- Show homepage hero with "Launch App" button
-- Button glows and pulses
-
-**NARRATOR:**
-"Pick a market. Pick an opponent. Make your prediction. **Win your rewards.**"
-
----
-
-### [0:95–1:30] Closing
-**NARRATOR:**
-"Built for **OneHack 3.0** — the AI & GameFi hackathon on DoraHacks.
-
-OnePredict Arena: Where humans and AI compete for crypto supremacy."
-
-*[ACTIONS:]*
-- Final title card: "OnePredict Arena"
-- Subtitle: "AI vs Humans. Real Crypto. Real Rewards."
-- Logo animations
-- Website URL appears: `onepredict-arena.xyz` (placeholder)
-- Social handles (Discord/Twitter) fade in
-
-**[End of video — 1:30]**
+**[End of video — 2:00]**
 
 ---
 
 ## Director's Notes
 
 ### Visual Pacing
-- Keep screen transitions snappy (0.3–0.5 sec)
-- Use fade-in for text overlays
-- Confetti only on wins (not excessive)
+- **0:00–0:15:** Slow, cinematic (establishing the problem)
+- **0:15–0:50:** Moderate pace (asset selection, triggering evaluation)
+- **0:50–1:45:** Slower again (debate display, let judges read the scores)
+- **1:45–2:00:** Fast finale (integration, call-to-action)
+
+### Screen Layout Strategy
+- **0:00–0:50:** Single asset card focus
+- **0:50–1:15:** **3-panel split screen** (this is the visual centerpiece)
+  - Left: Auditor (green), Middle: Risk Officer (red), Right: Arbitrator (orange)
+  - Each panel shows risk score, collateral ratio, reasoning
+  - Smooth transitions between panels as narrator highlights each
+- **1:15–1:45:** Fold 3 panels into single result card
+- **1:45–2:00:** Product integration icons
 
 ### Narration Tone
-- **Opening:** Energetic hook ("Ever wanted to outsmart AI?")
-- **Middle:** Educational, clear instructions ("Pick market, pick opponent, make prediction")
-- **Peak:** Excitement during countdown ("Will the price hold?")
-- **Climax:** Celebration of win (confetti, confirmation)
-- **Close:** Inspirational call-to-action ("Ready to earn?")
+- **Opening:** Curious, thoughtful (not hype) — "What if three AI agents..."
+- **Middle:** Educational, matter-of-fact — "The Auditor sees..., The Risk Officer spots..."
+- **Peak:** Emphasis on consensus — "This is the power of..."
+- **Close:** Professional, confident — "...becomes blockchain truth"
 
-### Music Cues
-- **0:00–0:05** — Build-up synth (unknown artist vibes)
-- **0:05–0:50** — Steady tempo (waiting period music, cool down)
-- **0:50–0:75** — Peak energy (countdown + results)
-- **0:75–1:30** — Outro, softer (leaderboard + closing)
+### Music
+- **0:00–0:15** — Ambient, philosophical (Blade Runner-ish)
+- **0:15–1:15** — Steady, cerebral (decision-making music)
+- **1:15–2:00** — Slight uptempo (momentum, confidence)
 
 ### Audio Effects
-- Click sounds on buttons (subtle)
-- Countdown beep (every 10 sec)
-- Victory chime on win (satisfying)
-- Coin drop for reward notification
+- Subtle click sounds on buttons (very minimal)
+- Soft whoosh when panels animate (not mechanical)
+- Brief chime when consensus appears
+- **No loud/game-like sounds** (this is financial, not gaming)
 
-### Testimonial Alternative (Optional)
-If judges want social proof, insert at **[0:80]**:
+### Color Scheme
+- **Auditor:** Green (bullish, opportunity)
+- **Risk Officer:** Red (cautious, risk)
+- **Arbitrator:** Orange (balanced, synthesis)
+- **Background:** Dark/professional (not flashy)
 
-*Quick cut to player testimonial (15 sec):*
-**PLAYER 1:** "I'm beating Claude Sonnet. This is insane. I'm up 45 OCT tokens."
-**PLAYER 2:** "The predictions are scary accurate. Makes me think differently about markets."
+---
+
+## Variant 1: Expert Audience (Judges = Finance/Tech)
+
+If judges are familiar with finance:
+- Emphasize **transparency of debate** (vs. black-box appraisal)
+- Show full reasoning snippets (not just scores)
+- Mention **blockchain verification** and appeal process
+- Highlight use case: "Banks, RWA protocols, tokenized assets"
+
+## Variant 2: Broader Audience (Judges = General Tech)
+
+If judges are less finance-savvy:
+- Lead with **"AI as judges for asset value"** concept
+- Use analogies: "Like showing your work in math class"
+- Simplify collateral language: "How much cushion we need"
+- Emphasize innovation: "First AI consensus system for real assets"
+
+---
+
+## Optional Shots (If Time Permits)
+
+**Insert at [1:30] if you have extra 10 seconds:**
+- Quick pan through the 6 sample assets
+- Text: "6 sample RWAs: Real Estate, Energy, Maritime, Agricultural, Commodity"
+- Then cut to: "Add your own assets coming soon"
+
+**Insert at [1:40] if you want to show API:**
+- Fast cut to Swagger UI or curl output
+- Text: "REST API for developers: GET /api/assets, POST /api/evaluate"
+- "Build your own RWA applications"
 
 ---
 
@@ -255,15 +207,34 @@ If judges want social proof, insert at **[0:80]**:
 
 Before recording:
 - ✅ Backend running on localhost:8000
-- ✅ Frontend running on localhost:3000
-- ✅ OneWallet testnet configured
-- ✅ Price data refreshing in real-time
-- ✅ AI predictions generating correctly
-- ✅ Leaderboard loading top 10 players
-- ✅ Battle countdown firing timely results
-- ✅ Confetti animation triggers on win
+- ✅ `/api/assets` returns 6 assets quickly
+- ✅ `/api/evaluate?asset_id=medellin-tech-hub` completes in 10–15 seconds
+- ✅ All three agents' assessments visible and distinct
+- ✅ Risk scores differ: Auditor ~30, Risk Officer ~60, Arbitrator ~45
+- ✅ Collateral ratios differ: Auditor 110–115%, Risk Officer 140–150%, Arbitrator 125–135%
+- ✅ Recommendation logic working (Buy/Hold/Caution based on metrics)
+- ✅ No API errors, graceful fallbacks if any API down
+- ✅ JSON responses pretty-printed for readability
+
+### Recording Environment
+- Clean desktop, no browser tabs visible except target site/API
+- Screen at native resolution (1920×1080 or higher)
+- Lighting neutral, no glare on screen
+- Narration in quiet room, clear audio
+- Total record: 2:00–2:15 (trim to 2:00 in edit)
 
 ---
 
-**Total Length:** ~90 seconds
-**Re-watch Target:** Judges should understand the game, the AI competition, and OneChain value in <2 minutes.
+## Post-Production Notes
+
+- **Transitions:** Fade (0.5s) between sections, no wipes or spins
+- **Text overlays:** Use clean sans-serif (Helvetica, Inter), white on dark
+- **Captions:** Include for judges watching without sound
+- **Watermark:** OneConsensus logo in corner (not obstructive)
+- **End card:** 3 seconds, links to repo/docs
+
+---
+
+**Total Length:** ~2 minutes (extended from 90s to show full debate)
+**Re-watch Target:** Judges understand the AI consensus concept, RWA use case, and OneChain integration in one viewing.
+**Success Metric:** Judges say, "I want to use this for my RWA protocol."

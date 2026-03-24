@@ -210,239 +210,223 @@ GET /api/health
 
 ### Frontend (`frontend/src/` — Coming Soon)
 
-#### Pages
-- **`app/arena/page.tsx`** — Main battle arena (4 states: SELECT → PREDICT → WAITING → RESULT)
-- **`app/leaderboard/page.tsx`** — Top players, ranks, win rates
-- **`app/profile/page.tsx`** — Connected player stats, history, streak
+#### Future Pages
+- **`app/assets/page.tsx`** — Asset browser, search, filter by type
+- **`app/evaluate/page.tsx`** — Asset selection → consensus display
+- **`app/investor/dashboard.tsx`** — Investor's portfolio, past evaluations
 
 #### Components
-- **`MarketSelector`** — Card-based market chooser (BTC, ETH, SOL, FLOW)
-- **`AIOpponentCard`** — Opponent personality selector with descriptions
-- **`PredictionPanel`** — UP/DOWN/FLAT buttons + real-time AI reasoning display
-- **`CountdownTimer`** — Animated timer showing battle duration
-- **`BattleResult`** — Win/loss display with price delta, AI explanation, "Play Again" button
-- **`Header`** — Wallet connection button, nav to leaderboard/profile
+- **`AssetCard`** — Asset name, type, location, value, yield
+- **`ConsensusDisplay`** — 3-panel debate view (Auditor | Risk Officer | Arbitrator)
+- **`RiskMeter`** — Visual risk score (1-100)
+- **`CollateralRatio`** — Visual collateral requirement
+- **`DebateSummary`** — Where agents agreed/disagreed
 
 #### State Management
-- **React hooks** (`useState`, `useContext`)
-- **API wrapper** (`lib/api.ts`) with fetch utilities
-- **Constants** (`lib/constants.ts`) for markets, AI personalities, timeframes
+- **React hooks** (`useState`, `useEffect`)
+- **API wrapper** (`lib/api.ts`) — Calls OneConsensus backend
+- **Constants** (`lib/constants.ts`) — Asset types, risk categories
 
 ### Backend (`backend/`)
 
 #### Main Application
-- **`app.py`** — FastAPI app with 8 REST endpoints
-  - Health check
-  - Price fetching
-  - Personality listing
-  - Prediction generation
-  - Battle lifecycle (create, resolve, status)
-  - Leaderboard
+- **`app.py`** — FastAPI app with 5 core RWA endpoints
+  - `GET /api/assets` — List all assets
+  - `GET /api/assets/{asset_id}` — Asset details
+  - `POST /api/evaluate` — **Main endpoint** (triggers consensus)
+  - `GET /api/agents` — Agent metadata
+  - `GET /health` — Health check
 
 #### Services
-- **`services/price_feed.py`**
-  - Async fetch from CoinGecko
-  - Caching to avoid rate limits
-  - Market validation (BTC, ETH, SOL, FLOW)
-
 - **`services/ai_predictor.py`**
-  - `AI_PERSONALITIES` dict: Oracle, Sentinel, Prophet, Cipher
-  - `get_ai_prediction()` — Calls appropriate LLM
-  - Confidence generation based on personality
-  - Reasoning explanation generation
+  - `AI_PERSONALITIES` dict: Auditor, Risk Officer, Arbitrator
+  - `get_auditor_assessment()` — Claude analysis (parallel)
+  - `get_risk_officer_assessment()` — GPT analysis (parallel)
+  - `get_arbitrator_consensus()` — Llama synthesis (sequential)
+  - Prompt engineering for distinct perspectives
 
-- **`services/battle_engine.py`**
-  - `create_battle()` — New battle state
-  - `get_battle()` — Fetch battle by ID
-  - `resolve_battle()` — Calculate winner, emit events
-  - Battle storage (in-memory dict for hackathon)
+- **`services/rwa_assets.py`**
+  - Asset catalog (6 samples)
+  - Asset lookup, validation
+  - Structured RWAAsset model
+
+- **`services/consensus_engine.py`**
+  - `evaluate_asset()` — Orchestrates 3-agent evaluation
+  - Parallel execution (asyncio)
+  - Result aggregation
+  - Recommendation logic (based on risk/collateral spread)
 
 #### Data Models
 - **`schemas.py`** — Pydantic models
-  - `PredictionRequest` (market, direction, timeframe)
-  - `AIPrediction` (direction, confidence, reasoning, model)
-  - `BattleResult` (winner, prices, explanation)
+  - `RWAAsset` (id, name, type, location, value, yield, risks)
+  - `AssessmentResult` (agent_name, risk_score, collateral_ratio, reasoning)
+  - `EvaluationResponse` (all 3 assessments + consensus)
 
-### Contracts (`contracts/sources/`)
+### Contracts (`contracts/sources/` — Skeleton)
 
-#### `prediction_pool.move`
-**Core smart contract on OneChain (Sui fork)**
+#### `rwa_assessment.move`
+**Smart contract for on-chain assessment storage (OneChain/Sui)**
 
-##### Structs
-- **`PredictionPool<T>`** — Holds all predictions for a market
-  - `market` — Market symbol (BTC, ETH, SOL, FLOW)
-  - `start_price`, `end_price` — Prices at start/end
-  - `pool_balance` — Staked coins collected
-  - `total_predictions` — Count of predictions
-  - `status` — 0 (open) or 1 (resolved)
-
-- **`Prediction`** — Individual player prediction
-  - `player` — Player's address
-  - `direction` — 1 (UP) or 2 (DOWN)
-  - `amount` — Stake amount
-  - `timestamp` — When prediction made
+##### Struct
+- **`RWAAssetAssessment<T>`**
+  - `asset_id` — Reference to asset
+  - `auditor_risk_score`, `risk_officer_risk_score`, `arbitrator_risk_score`
+  - `final_collateral_ratio`
+  - `timestamp`, `assessor`
 
 ##### Functions
-- **`create_pool()`** — Admin creates prediction pool for market
-- **`make_prediction()`** — Player stakes coin + direction
-- **`resolve_pool()`** — Admin resolves with end price, emits winner event
-- **`get_direction()`** — Helper: returns UP/DOWN based on price change
-- **`pool_is_open()`** — Helper: checks if pool still accepting predictions
-
-##### Events
-- `PoolCreated` — New market pool
-- `PredictionMade` — Player staked
-- `PoolResolved` — Winner determined
+- **`store_assessment()`** — Backend submits consensus to chain
+- **`get_assessment()`** — Query historical assessments
+- **`appeal()`** — Future: investor can challenge assessment
 
 ---
 
-## AI Personality System
+## AI Agent System
 
-Each personality has distinct behavior affecting prediction and reasoning:
+Three distinct financial personas with different models and prompts:
 
-| Personality | Model | Style | Confidence Base | Example Reasoning |
-|---|---|---|---|---|
-| **Oracle** 🔮 | Claude 3 Sonnet | Data-driven, analytical | 60–75% | "Looking at the 4H chart, RSI is oversold. Expecting mean reversion UP." |
-| **Sentinel** 🛡️ | GPT-4o | Momentum-based, technical | 50–70% | "Volume spike detected. Momentum favors DOWN. Setting stop at -2%." |
-| **Prophet** 📈 | Llama 3.1 | Sentiment-based, narrative | 55–80% | "Social sentiment bullish. On-chain accumulation signals. Predicting UP." |
-| **Cipher** ⚡ | Claude 3 Sonnet | Volatility-focused | 45–65% | "Volatility expanding. Expecting price swings. Lean DOWN but keep wide stops." |
+| Agent | Model | Temperature | Focus | Example Output |
+|-------|-------|-------------|-------|-----------------|
+| **Auditor** 📊 | Claude Opus 4 | 0.9 | Yield optimization, growth, positive scenarios | Risk Score: 32, Collateral: 112.5%, "Strong opportunity in emerging tech hub..." |
+| **Risk Officer** 🛡️ | GPT-4o-mini | 0.6 | Risk mitigation, regulatory, downside scenarios | Risk Score: 58, Collateral: 145.0%, "Geopolitical volatility requires higher cushion..." |
+| **Arbitrator** ⚖️ | Llama 3.1 70B | 0.7 | Synthesis, balance, final call | Risk Score: 45, Collateral: 128.0%, "Balancing growth with prudence..." |
 
-**Confidence score** affects:
-- Visual prominence in UI (higher confidence = bolder display)
-- Player strategy (choosing cautious vs. bold opponents)
-- Not directly used in battle logic (outcome is price-based, not confidence)
+**Temperature Effect:**
+- **Higher temp (0.9):** More exploratory, optimistic framings
+- **Lower temp (0.6):** More analytical, risk-focused framings
+- **Mid temp (0.7):** Balanced synthesis
 
-**Reasoning** shows:
-- Why AI made the call
-- What market signals influenced it
-- Risk disclaimers for lower confidence
-
----
-
-## OneChain Integration
-
-### 1. OnePredict (Core Prediction Engine)
-- Predictions submitted to `PredictionPool` contract
-- Start/end prices anchored to OneDEX price feeds
-- Pool can handle any market with price oracle
-
-### 2. OneWallet (Authentication + Staking)
-- Player authenticates via `@onelabs/dapp-kit`
-- Wallet connection displays address
-- Staking happens via Move transaction
-  - Player sends coin to pool
-  - `make_prediction()` called on-chain
-
-### 3. OneDEX (Real-Time Price Feeds)
-- `PredictionPool` can read price from OneDEX
-- Currently using CoinGecko in backend (easier for hackathon)
-- Production integration: read OneDEX price oracles in `resolve_pool()`
-
-### 4. OneID (Player Profiles)
-- Player address as identity
-- Profile page shows wallet-connected stats
-- Could extend to OneID for profile metadata
-
-### 5. OnePlay (Gamification)
-- Leaderboard = achievement tracking
-- Win streaks, total earnings tracked in contract
-- Could integrate for achievement badges/tokens
+**Model Diversity:**
+- Claude → Strong financial reasoning
+- GPT → Regulatory/compliance knowledge
+- Llama → Open-source, cost-effective synthesis
 
 ---
 
-## Security Considerations
+## OneChain Integration Points
 
-### Current (Hackathon) Setup
-✅ **What's protected:**
-- CORS enabled (all origins for testing)
-- No hardcoded secrets
-- API keys in `.env` (not committed)
-- Battle state isolated by UUID
+### 1. OneRWA (Asset Registry)
+- OneConsensus evaluations feed into RWA tokenization
+- Risk scores → collateral pool initialization
+- Consensus verified on-chain
 
-⚠️ **What's not (acceptable for hackathon):**
-- No authentication on backend endpoints
-- In-memory battle storage (lost on restart)
-- Mock leaderboard data
-- No rate limiting
+### 2. OneWallet (Investor Auth)
+- Investor connects wallet to access evaluations
+- Future: stake ARENA token to weight own risk votes
 
-### Production Roadmap
-1. **Authentication**
-   - Require JWT or OneWallet signature
-   - Rate limit by wallet address
+### 3. OnePredict (Risk Oracle)
+- Risk scores submitted to Pyth/Switchboard
+- Derivatives pricing reads consensus scores
+- Enables hedging instruments
 
-2. **Data Persistence**
-   - Move battle storage to PostgreSQL
-   - Leaderboard from OnChain contract reads
+### 4. OneID (Investor Identity)
+- KYC metadata linked to OneID
+- Auditor reputation tracking
+- Future: accredited investor verification
 
-3. **Price Oracle**
-   - Integrate OneDEX price oracle
-   - Fallback to Pyth or Switchboard
+### 5. OnePlay (Analyst Leaderboard)
+- Top risk analysts earn tokens
+- Accuracy tracking against real-world outcomes
+- Future: achievement badges
 
-4. **Smart Contract Validation**
-   - Ensure all rewards distributed on-chain
-   - Verify pool liquidity before accepting bets
+---
+
+## Error Handling & Resilience
+
+### API Failures
+If Claude/GPT/Groq API unavailable:
+- System returns **mock assessment** in agent's style
+- Response labeled: `"reasoning": "Using fallback assessment due to API timeout"`
+- No 500 error; judges see full flow
+
+### Graceful Degradation
+- Missing optional fields → sensible defaults
+- Invalid asset ID → 404 with clear message
+- Malformed request → 400 with validation details
+
+---
+
+## Performance Characteristics
+
+| Operation | Time | Notes |
+|-----------|------|-------|
+| List assets | 50ms | In-memory |
+| Get asset details | 50ms | In-memory |
+| Auditor + Risk Officer (parallel) | 5–10s | Two LLM calls in parallel |
+| Arbitrator synthesis | 2–3s | Sequential after both ready |
+| **Total evaluation** | **7–13s** | Parallel + sequential |
+
+**Optimization opportunities:**
+- Cache evaluations (same asset evaluated often)
+- Batch evaluations (multiple assets in one request)
+- Async frontend polling (show in-progress updates)
 
 ---
 
 ## Future Roadmap
 
-### Phase 2: Enhanced Gameplay
-- **Tournaments** — Bracket-based multiplayer battles
-- **Streaks & Achievements** — OnePlay badge system
-- **Custom Timeframes** — 1m, 5m, 15m, 1h, 1d
-- **AI vs AI** — Watch two AI personalities battle each other
+### Phase 2: Enhanced Asset Coverage
+- Add 100+ real-world RWA examples
+- Custom asset submission (investor-supplied metadata)
+- Asset portfolio analysis (multiple assets)
 
-### Phase 3: Monetization
-- **Prize Pool** — Staking rewards from protocol fees
-- **Sponsored Markets** — Brands sponsor specific markets
-- **Seasonal Leaderboards** — Monthly/weekly resets with rewards
+### Phase 3: Feedback Loop
+- Track real-world asset outcomes vs. AI predictions
+- Retrain/fine-tune agents based on accuracy
+- Consensus mechanism improves over time
 
-### Phase 4: Advanced AI
-- **On-Chain AI Oracles** — AI predictions submitted to Pyth/Switchboard
-- **Ensemble Models** — Combine Oracle + Sentinel + Prophet for better accuracy
-- **Feedback Loop** — AI learns from historical battle outcomes
+### Phase 4: On-Chain Governance
+- Token holders vote on agent parameters
+- Reputation system for auditors
+- Appeal process for asset classifications
 
-### Phase 5: Ecosystem
-- **Mobile App** — React Native version
-- **Discord Bot** — Challenge friends via Discord
-- **Analytics Dashboard** — Player heat maps, market insights
-- **API** — Allow external devs to build prediction UIs
+### Phase 5: Multi-Regional Scaling
+- Region-specific agents (Asia risk expert, Europe regulatory specialist)
+- Local market knowledge integrated into consensus
+- Cross-border RWA evaluation
 
 ---
 
 ## Deployment
 
-### Frontend (Vercel/Web3 Compatible)
-```
-npm run build
-npm run deploy  # Vercel auto-deploy on merge to main
+### Backend (Local Development)
+```bash
+cd backend
+python -m venv venv
+source venv/bin/activate
+pip install -r requirements.txt
+python app.py
+# API at http://localhost:8000
 ```
 
-### Backend (Heroku/Railway/Cloud Run)
-```
-pip install -r requirements.txt
-uvicorn app:app --host 0.0.0.0 --port $PORT
+### Backend (Production)
+```bash
+# Docker
+docker build -t oneconsensus-backend .
+docker run -e ANTHROPIC_API_KEY=... -e OPENAI_API_KEY=... -p 8000:8000 oneconsensus-backend
+
+# Or Railway/Render (see DEPLOY.md)
 ```
 
 ### Contracts (OneChain Testnet)
-```
+```bash
 cd contracts
+one move build
 one move publish --network testnet
 ```
 
 ---
 
-## Technology Choices
+## Technology Stack
 
 | Layer | Technology | Why |
 |-------|-----------|-----|
-| Frontend | Next.js 15 + React 19 | SSR, modern hooks, strong ecosystem |
-| Styling | TailwindCSS + shadcn/ui | Fast, accessible, beautiful UI |
-| Backend | FastAPI | Async, auto-docs, Python ML ecosystem |
-| Contracts | Move (Sui fork) | Type-safe, asset-oriented, OneChain native |
-| Wallet | @onelabs/dapp-kit | OneChain native, smooth UX |
-| Price Data | CoinGecko (+ OneDEX planned) | Free tier, reliable, no auth needed |
-| AI Models | Claude/GPT/Llama | Different personalities, via LiteLLM proxy |
+| Backend | FastAPI (Python) | Async, type-safe, great for AI orchestration |
+| AI Models | Claude/GPT/Llama | Different strengths, accessible APIs |
+| Smart Contracts | Move (Sui fork) | Type-safe assets, OneChain native |
+| Frontend (Future) | Next.js 15 + React 19 | SSR, modern DX |
+| Authentication | OneWallet + JWT | OneChain native |
+| Database | PostgreSQL (future) | Asset history, evaluation logs |
 
 ---
 
