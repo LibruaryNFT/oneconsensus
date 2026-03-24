@@ -38,6 +38,29 @@ Three sovereign AI agents debate, analyze, and reach consensus on real-world ass
 | **OneID** | Investor identity verification for KYC |
 | **OnePlay** | Leaderboard for top risk analysts (future) |
 
+## Deployed on OneChain Testnet
+
+**Live Contracts:**
+- **Package ID:** `0x1f0b34d95db5859753f3aa7508055c5c049e33d313acf3585bf039cf22fb974e`
+- **Modules:** leaderboard, prediction_pool, rewards
+- **Network:** OneChain Testnet
+- **TX Hash:** `7mmSkfmpzk4wXN3j5fgPms6KcUM1R8Md7wLFDvkLXdma`
+- **Deployer:** `0xb379f5e673d9602fd9bc0b7e6d4b36dd5fdc4897ac7a44085961783196256409`
+
+**Verify on-chain:**
+- **Explorer:** [View on OneScan](https://onescan.cc/testnet/object/0x1f0b34d95db5859753f3aa7508055c5c049e33d313acf3585bf039cf22fb974e)
+- **Check modules via RPC:**
+  ```bash
+  curl -X POST https://rpc.onechain.io/testnet \
+    -H "Content-Type: application/json" \
+    -d '{
+      "jsonrpc": "2.0",
+      "id": 1,
+      "method": "sui_getObject",
+      "params": ["0x1f0b34d95db5859753f3aa7508055c5c049e33d313acf3585bf039cf22fb974e"]
+    }'
+  ```
+
 ## Quick Start
 
 ### Backend (Local)

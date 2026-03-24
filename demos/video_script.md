@@ -111,16 +111,31 @@
 
 ---
 
-### [1:45–2:00] OneChain Integration & Close
+### [1:40–1:50] On-Chain Proof (Key Moment for Judges)
+**NARRATOR:**
+"Here's the proof. Our contracts are **live on OneChain Testnet** right now."
+
+*[ACTIONS:]*
+- **Show OneScan Explorer** with live package ID: `0x1f0b34d95db5859753f3aa7508055c5c049e33d313acf3585bf039cf22fb974e`
+- Display three deployed modules: **leaderboard**, **prediction_pool**, **rewards**
+- Show deployment TX hash and timestamp
+- Text overlay: "Package ID: 0x1f0b34d95db5859753f3aa7508055c5c049e33d313acf3585bf039cf22fb974e"
+
+**NARRATOR:**
+"Three modules live on OneChain: leaderboard for ranking analysts, prediction pool for risk assessments, and rewards for incentives."
+
+---
+
+### [1:50–2:00] OneChain Integration & Close
 **NARRATOR:**
 "All powered by **OneChain** — transparent, verifiable, on-chain."
 
 *[ACTIONS:]*
 - Flash icons: OneRWA, OneWallet, OnePredict, OneID
-- Show "Consensus verified on-chain" badge
+- Show verified on-chain badge (with actual TX hash)
 - Final title card: "OneConsensus"
 - Subtitle: "AI Consensus for Real-World Assets"
-- Website/Discord handles fade in
+- Link to explorer in description: https://onescan.cc/testnet/object/0x1f0b34d95db5859753f3aa7508055c5c049e33d313acf3585bf039cf22fb974e
 
 **NARRATOR:**
 "Built for **OneHack 3.0** — The AI & GameFi hackathon. **OneConsensus: Where AI debate becomes blockchain truth.**"

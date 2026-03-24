@@ -3,7 +3,10 @@
 import { useState } from "react"
 import { useCurrentAccount } from "@mysten/dapp-kit"
 import { SAMPLE_ASSETS } from "@/lib/constants"
-import { ChevronRight, Shield, TrendingUp, AlertCircle, CheckCircle2 } from "lucide-react"
+import { ChevronRight, Shield, TrendingUp, AlertCircle, CheckCircle2, Loader2, ExternalLink } from "lucide-react"
+import { ONECHAIN_CONFIG, formatContractAddress, getExplorerLink } from "@/lib/contracts"
+import { useBlockchain } from "@/lib/useBlockchain"
+import OnChainBadge from "@/components/OnChainBadge"
 
 type EvaluationState = "SELECT_ASSET" | "EVALUATING" | "RESULTS"
 
@@ -201,12 +204,25 @@ function AssessmentCard({ panel, isRevealing }: { panel: AssessmentPanel; isReve
 
 export default function ArenaPage() {
   const currentAccount = useCurrentAccount()
+  const { recordAssessmentOnChain } = useBlockchain()
   const [state, setState] = useState<EvaluationState>("SELECT_ASSET")
   const [selectedAsset, setSelectedAsset] = useState<(typeof SAMPLE_ASSETS)[0] | null>(null)
   const [result, setResult] = useState<EvaluationResult | null>(null)
   const [showAuditor, setShowAuditor] = useState(false)
   const [showRiskOfficer, setShowRiskOfficer] = useState(false)
   const [showArbitrator, setShowArbitrator] = useState(false)
+  const [isSubmitting, setIsSubmitting] = useState(false)
+  const [submissionStatus, setSubmissionStatus] = useState<{
+    show: boolean
+    success: boolean
+    message: string
+    txHash?: string
+    explorerLink?: string
+  }>({
+    show: false,
+    success: false,
+    message: "",
+  })
 
   const handleSelectAsset = async (asset: (typeof SAMPLE_ASSETS)[0]) => {
     setSelectedAsset(asset)
@@ -243,6 +259,38 @@ export default function ArenaPage() {
     setShowAuditor(false)
     setShowRiskOfficer(false)
     setShowArbitrator(false)
+    setSubmissionStatus({ show: false, success: false, message: "" })
+  }
+
+  const handleSubmitToChain = async () => {
+    if (!result) return
+
+    setIsSubmitting(true)
+    setSubmissionStatus({ show: true, success: false, message: "Submitting to OneChain..." })
+
+    try {
+      const txResult = await recordAssessmentOnChain(
+        selectedAsset?.id || "",
+        result.riskScore,
+        result.recommendation
+      )
+
+      setSubmissionStatus({
+        show: true,
+        success: txResult.success,
+        message: txResult.message,
+        txHash: txResult.txHash,
+        explorerLink: txResult.explorerLink,
+      })
+    } catch (error) {
+      setSubmissionStatus({
+        show: true,
+        success: false,
+        message: `Error: ${error instanceof Error ? error.message : "Failed to submit"}`,
+      })
+    } finally {
+      setIsSubmitting(false)
+    }
   }
 
   return (
@@ -441,10 +489,11 @@ export default function ArenaPage() {
                 <Shield className="h-5 w-5 text-green-400" />
                 <h3 className="font-semibold text-green-400">Consensus</h3>
               </div>
-              <p className="text-2xl font-bold text-green-400 mb-2">✓ Reconciled</p>
-              <p className="text-xs text-muted-foreground">
+              <p className="text-2xl font-bold text-green-400 mb-4">✓ Reconciled</p>
+              <p className="text-xs text-muted-foreground mb-4">
                 All perspectives integrated into recommendation
               </p>
+              <OnChainBadge size="sm" />
             </div>
           </div>
 
@@ -481,6 +530,76 @@ export default function ArenaPage() {
             </div>
           </div>
 
+          {/* On-Chain Contract Information */}
+          <div className="rounded-lg border border-green-500/30 bg-gradient-to-br from-green-950/20 to-transparent p-6">
+            <div className="grid gap-6 md:grid-cols-3">
+              <div>
+                <h4 className="text-xs font-semibold text-green-400 mb-2 uppercase">Contract Package</h4>
+                <button
+                  onClick={() => window.open(getExplorerLink("object", ONECHAIN_CONFIG.packageId), "_blank")}
+                  className="flex items-center gap-2 font-mono text-sm text-foreground hover:text-green-400 transition-colors break-all"
+                >
+                  {formatContractAddress(ONECHAIN_CONFIG.packageId, 6)}
+                  <ExternalLink className="h-3 w-3 flex-shrink-0" />
+                </button>
+              </div>
+              <div>
+                <h4 className="text-xs font-semibold text-green-400 mb-2 uppercase">Network</h4>
+                <p className="text-sm text-foreground">{ONECHAIN_CONFIG.network}</p>
+              </div>
+              <div>
+                <h4 className="text-xs font-semibold text-green-400 mb-2 uppercase">Modules</h4>
+                <p className="text-sm text-foreground">
+                  {Object.values(ONECHAIN_CONFIG.modules).join(", ")}
+                </p>
+              </div>
+            </div>
+          </div>
+
+          {/* Submission Status Modal/Toast */}
+          {submissionStatus.show && (
+            <div
+              className={`rounded-lg border p-6 ${
+                submissionStatus.success
+                  ? "border-green-500/50 bg-gradient-to-br from-green-950/30 to-transparent"
+                  : "border-red-500/50 bg-gradient-to-br from-red-950/30 to-transparent"
+              }`}
+            >
+              <div className="flex gap-4">
+                <div className="flex-shrink-0">
+                  {submissionStatus.success ? (
+                    <CheckCircle2 className="h-6 w-6 text-green-400" />
+                  ) : (
+                    <AlertCircle className="h-6 w-6 text-red-400" />
+                  )}
+                </div>
+                <div className="flex-1">
+                  <h3
+                    className={`font-semibold mb-1 ${submissionStatus.success ? "text-green-400" : "text-red-400"}`}
+                  >
+                    {submissionStatus.success ? "✓ Assessment Recorded" : "⚠ Submission Error"}
+                  </h3>
+                  <p className="text-sm text-foreground mb-3">{submissionStatus.message}</p>
+                  {submissionStatus.txHash && (
+                    <div className="space-y-2">
+                      <p className="text-xs text-muted-foreground">Transaction Hash:</p>
+                      <button
+                        onClick={() =>
+                          submissionStatus.explorerLink &&
+                          window.open(submissionStatus.explorerLink, "_blank")
+                        }
+                        className="flex items-center gap-2 font-mono text-xs text-green-400 hover:text-green-300 transition-colors break-all"
+                      >
+                        {formatContractAddress(submissionStatus.txHash, 8)}
+                        <ExternalLink className="h-3 w-3 flex-shrink-0" />
+                      </button>
+                    </div>
+                  )}
+                </div>
+              </div>
+            </div>
+          )}
+
           {/* Action Buttons */}
           <div className="flex flex-col sm:flex-row gap-4 justify-center pt-4 bg-gradient-to-t from-background/80 to-transparent -mx-4 px-4 py-8 sm:-mx-0 sm:px-0 sm:from-transparent sm:to-transparent">
             <button
@@ -490,16 +609,21 @@ export default function ArenaPage() {
               Evaluate Another Asset
             </button>
             <button
-              onClick={() => {
-                // Toast notification
-                const message = "Evaluation submitted to OneChain testnet!"
-                if (typeof window !== "undefined" && "alert" in window) {
-                  alert(message)
-                }
-              }}
-              className="rounded-lg bg-gradient-to-r from-amber-600 to-amber-700 px-8 py-3 font-semibold text-white transition-all hover:shadow-lg hover:shadow-amber-500/50 active:scale-95"
+              onClick={handleSubmitToChain}
+              disabled={isSubmitting}
+              className="flex items-center justify-center gap-2 rounded-lg bg-gradient-to-r from-green-600 to-emerald-700 px-8 py-3 font-semibold text-white transition-all hover:shadow-lg hover:shadow-green-500/50 active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed"
             >
-              Submit to Chain
+              {isSubmitting ? (
+                <>
+                  <Loader2 className="h-4 w-4 animate-spin" />
+                  Submitting...
+                </>
+              ) : (
+                <>
+                  <CheckCircle2 className="h-4 w-4" />
+                  Record Assessment On-Chain
+                </>
+              )}
             </button>
           </div>
         </div>

@@ -67,9 +67,11 @@ curl http://localhost:8000/api/agents
 - [ ] **Recommendation** — Strong Buy, Buy, Hold, Caution, or Strong Caution
 - [ ] **No crashes** — All endpoints respond without 500 errors
 
-### ✅ OneChain Integration
+### ✅ OneChain Integration (Deployed ✅)
+- [x] **Contracts deployed on OneChain Testnet** — Package ID: `0x1f0b34d95db5859753f3aa7508055c5c049e33d313acf3585bf039cf22fb974e`
+- [x] **OneScan explorer link works** — https://onescan.cc/testnet/object/0x1f0b34d95db5859753f3aa7508055c5c049e33d313acf3585bf039cf22fb974e
+- [x] **Modules deployed** — leaderboard, prediction_pool, rewards
 - [ ] **OneChain products mentioned** — README lists OneRWA, OneWallet, OnePredict, OneID, OnePlay
-- [ ] **Move contract skeleton exists** — Check `contracts/` directory (can be deployed later)
 - [ ] **Architecture diagram** — Shows OneChain integration
 
 ### ✅ UX & Polish
@@ -236,6 +238,49 @@ class AssessmentResult(BaseModel):
     reasoning: str
     risks: list[str]
     opportunities: list[str]
+```
+
+---
+
+## Verify Our Deployed Contracts
+
+### Quick Verification for Judges
+
+**On-Chain Proof:**
+- **Package ID:** `0x1f0b34d95db5859753f3aa7508055c5c049e33d313acf3585bf039cf22fb974e`
+- **Deployed on:** OneChain Testnet
+- **TX Digest:** `7mmSkfmpzk4wXN3j5fgPms6KcUM1R8Md7wLFDvkLXdma`
+
+**Method 1: Visual Verification (Easiest)**
+1. Visit [OneScan Explorer](https://onescan.cc/testnet/object/0x1f0b34d95db5859753f3aa7508055c5c049e33d313acf3585bf039cf22fb974e)
+2. See live modules: **leaderboard**, **prediction_pool**, **rewards**
+
+**Method 2: RPC Verification (CLI)**
+```bash
+# Verify package exists and modules are deployed
+curl -X POST https://rpc.onechain.io/testnet \
+  -H "Content-Type: application/json" \
+  -d '{
+    "jsonrpc": "2.0",
+    "id": 1,
+    "method": "sui_getObject",
+    "params": ["0x1f0b34d95db5859753f3aa7508055c5c049e33d313acf3585bf039cf22fb974e"]
+  }' | jq '.result.data.type'
+
+# Output should include: leaderboard, prediction_pool, rewards
+```
+
+**Method 3: Transaction Verification**
+```bash
+# Check the deployment transaction
+curl -X POST https://rpc.onechain.io/testnet \
+  -H "Content-Type: application/json" \
+  -d '{
+    "jsonrpc": "2.0",
+    "id": 1,
+    "method": "sui_getTransactionBlock",
+    "params": ["7mmSkfmpzk4wXN3j5fgPms6KcUM1R8Md7wLFDvkLXdma"]
+  }' | jq '.result.transaction.data.transaction'
 ```
 
 ---

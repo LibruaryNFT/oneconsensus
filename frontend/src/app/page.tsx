@@ -1,7 +1,11 @@
+export const dynamic = "force-dynamic"
+
 import HeroSection from "@/components/HeroSection"
 import FeatureCard from "@/components/FeatureCard"
+import OnChainBadge from "@/components/OnChainBadge"
 import Link from "next/link"
-import { BookOpen, Shield, Zap, Sparkles } from "lucide-react"
+import { BookOpen, Shield, Zap, Sparkles, ExternalLink } from "lucide-react"
+import { ONECHAIN_CONFIG, formatContractAddress, getExplorerLink } from "@/lib/contracts"
 
 export default function Home() {
   return (
@@ -112,6 +116,49 @@ export default function Home() {
             <p className="text-sm text-muted-foreground">
               Instant risk scores, collateral ratios, and opportunity assessments
             </p>
+          </div>
+        </div>
+      </section>
+
+      {/* Contract Deployment Info Section */}
+      <section className="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8">
+        <div className="rounded-lg border border-green-500/30 bg-gradient-to-br from-green-950/20 to-transparent p-8">
+          <div className="text-center mb-6">
+            <h3 className="text-2xl font-bold text-foreground mb-2">
+              Smart Contracts on OneChain Testnet
+            </h3>
+            <p className="text-muted-foreground">
+              All assessments are recorded and verified on OneChain for transparency and institutional trust
+            </p>
+          </div>
+
+          <div className="grid gap-4 md:grid-cols-3 mb-6">
+            <div className="rounded-lg border border-green-500/20 bg-green-950/10 p-4">
+              <h4 className="text-xs font-semibold text-green-400 mb-2 uppercase">Package ID</h4>
+              <button
+                onClick={() => window.open(getExplorerLink("object", ONECHAIN_CONFIG.packageId), "_blank")}
+                className="flex items-center gap-2 font-mono text-sm text-foreground hover:text-green-400 transition-colors break-all"
+              >
+                {formatContractAddress(ONECHAIN_CONFIG.packageId)}
+                <ExternalLink className="h-3 w-3 flex-shrink-0" />
+              </button>
+            </div>
+
+            <div className="rounded-lg border border-green-500/20 bg-green-950/10 p-4">
+              <h4 className="text-xs font-semibold text-green-400 mb-2 uppercase">Network</h4>
+              <p className="text-sm text-foreground">{ONECHAIN_CONFIG.network}</p>
+            </div>
+
+            <div className="rounded-lg border border-green-500/20 bg-green-950/10 p-4">
+              <h4 className="text-xs font-semibold text-green-400 mb-2 uppercase">Modules</h4>
+              <p className="text-sm text-foreground">
+                {Object.values(ONECHAIN_CONFIG.modules).join(", ")}
+              </p>
+            </div>
+          </div>
+
+          <div className="flex justify-center">
+            <OnChainBadge size="md" />
           </div>
         </div>
       </section>

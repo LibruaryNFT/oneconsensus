@@ -262,7 +262,17 @@ GET /api/health
   - `AssessmentResult` (agent_name, risk_score, collateral_ratio, reasoning)
   - `EvaluationResponse` (all 3 assessments + consensus)
 
-### Contracts (`contracts/sources/` — Skeleton)
+### Contracts (Deployed on OneChain Testnet)
+
+#### Live Deployment
+**Package ID:** `0x1f0b34d95db5859753f3aa7508055c5c049e33d313acf3585bf039cf22fb974e`
+
+**Modules Deployed:**
+- `leaderboard` — Ranking system for risk analysts
+- `prediction_pool` — Asset evaluation pool
+- `rewards` — Incentive distribution
+
+**Verification:** [OneScan Explorer](https://onescan.cc/testnet/object/0x1f0b34d95db5859753f3aa7508055c5c049e33d313acf3585bf039cf22fb974e)
 
 #### `rwa_assessment.move`
 **Smart contract for on-chain assessment storage (OneChain/Sui)**

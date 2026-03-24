@@ -139,15 +139,25 @@ export default function HeroSection() {
       {/* Powered By OneChain Section */}
       <section className="mx-auto max-w-6xl px-4 py-16 sm:px-6 lg:px-8">
         <div className="rounded-2xl border border-amber-500/20 glass-card text-center">
-          <div className="flex flex-col items-center justify-center gap-3">
+          <div className="flex flex-col items-center justify-center gap-4">
             <Scale className="h-8 w-8 text-amber-400 animate-pulse" />
             <h3 className="text-xl font-semibold text-foreground">
-              Powered by OneChain
+              Deployed on OneChain Testnet
             </h3>
             <p className="text-sm text-muted-foreground max-w-2xl">
               Built on OneChain&apos;s secure, transparent settlement layer for trustless
               RWA risk assessment with on-chain verification and institutional credibility
             </p>
+            <div className="pt-2">
+              <p className="text-xs text-muted-foreground mb-2">Network Status</p>
+              <span className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-green-500/10 border border-green-500/30 text-green-400 text-xs font-semibold">
+                <span className="relative flex h-2 w-2">
+                  <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75" />
+                  <span className="relative inline-flex rounded-full h-2 w-2 bg-green-400" />
+                </span>
+                Live on OneChain Testnet
+              </span>
+            </div>
           </div>
         </div>
       </section>

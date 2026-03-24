@@ -3,11 +3,12 @@
 import { ReactNode } from "react"
 import { SuiClientProvider, WalletProvider, createNetworkConfig } from "@mysten/dapp-kit"
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query"
+import { ONECHAIN_CONFIG } from "./contracts"
 
-// Network configuration for OneChain testnet (using Sui testnet as fallback)
+// Network configuration for OneChain testnet
 const { networkConfig } = createNetworkConfig({
   testnet: {
-    url: "https://fullnode.testnet.sui.io",
+    url: ONECHAIN_CONFIG.rpc,
     network: "testnet",
   },
 })
