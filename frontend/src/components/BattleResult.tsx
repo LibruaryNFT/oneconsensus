@@ -2,6 +2,7 @@
 
 import { GameResult } from "@/lib/api"
 import clsx from "clsx"
+import { useEffect, useState } from "react"
 
 interface BattleResultProps {
   result: GameResult
@@ -16,6 +17,18 @@ export default function BattleResult({
   market,
   onPlayAgain,
 }: BattleResultProps) {
+  const [displayedReward, setDisplayedReward] = useState(0)
+  const rewardAmount = result.playerWon ? 50 : 0
+
+  useEffect(() => {
+    if (result.playerWon && displayedReward < rewardAmount) {
+      const timer = setTimeout(() => {
+        setDisplayedReward((prev) => Math.min(prev + 5, rewardAmount))
+      }, 30)
+      return () => clearTimeout(timer)
+    }
+  }, [displayedReward, rewardAmount, result.playerWon])
+
   const getPersonalityName = (id: string): string => {
     const names: Record<string, string> = {
       oracle: "Oracle 🔮",
@@ -41,32 +54,48 @@ export default function BattleResult({
     ((result.endPrice - result.startPrice) / result.startPrice) * 100
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 p-4 backdrop-blur-sm">
-      <div className="w-full max-w-2xl rounded-2xl border border-primary bg-card p-8 shadow-2xl shadow-primary/30">
-        {/* Result headline */}
+    <div className={`fixed inset-0 z-50 flex items-center justify-center bg-black/80 p-4 backdrop-blur-sm ${result.playerWon ? "" : "animate-shake"}`}>
+      <div
+        className={clsx(
+          "w-full max-w-2xl rounded-2xl border bg-card p-8 shadow-2xl transition-all duration-500",
+          result.playerWon
+            ? "border-green-500/50 shadow-green-500/30 animate-fade-in"
+            : "border-red-500/50 shadow-red-500/30"
+        )}
+      >
+        {/* Result headline with dramatic styling */}
         <div className="mb-8 text-center">
           <h1
             className={clsx(
-              "text-5xl font-bold mb-2",
+              "text-6xl font-bold mb-2 animate-fade-in",
               result.playerWon
-                ? "bg-gradient-to-r from-green-400 to-emerald-500 bg-clip-text text-transparent"
-                : "bg-gradient-to-r from-amber-400 to-orange-500 bg-clip-text text-transparent"
+                ? "bg-gradient-to-r from-green-400 via-emerald-500 to-green-600 bg-clip-text text-transparent drop-shadow-lg"
+                : "bg-gradient-to-r from-red-400 via-orange-500 to-red-600 bg-clip-text text-transparent drop-shadow-lg"
             )}
           >
-            {result.playerWon ? "YOU WON! 🎉" : "AI WINS 🤖"}
+            {result.playerWon ? "🎉 YOU WON! 🎉" : "🤖 AI WINS 🤖"}
           </h1>
           <p className="text-lg text-muted-foreground">
             {market} Price Prediction Battle
           </p>
+
+          {/* Reward banner for wins */}
+          {result.playerWon && (
+            <div className="mt-4 animate-slide-up rounded-lg border border-green-500/50 bg-green-500/10 py-3 px-4">
+              <p className="text-xl font-bold text-green-400">
+                ✨ +{displayedReward} ARENA Tokens Earned ✨
+              </p>
+            </div>
+          )}
         </div>
 
         {/* Price movement */}
-        <div className="mb-8 rounded-xl border border-border bg-input p-6">
+        <div className="mb-8 rounded-xl border border-border glass-card">
           <h2 className="mb-4 font-bold text-foreground">Price Movement</h2>
           <div className="space-y-3">
             <div className="flex items-center justify-between">
               <span className="text-muted-foreground">Start Price:</span>
-              <span className="font-mono text-lg font-bold">
+              <span className="font-mono text-lg font-bold text-primary">
                 ${result.startPrice.toLocaleString("en-US", {
                   minimumFractionDigits: 2,
                   maximumFractionDigits: 2,
@@ -75,7 +104,7 @@ export default function BattleResult({
             </div>
             <div className="flex items-center justify-between">
               <span className="text-muted-foreground">End Price:</span>
-              <span className="font-mono text-lg font-bold">
+              <span className="font-mono text-lg font-bold text-primary">
                 ${result.endPrice.toLocaleString("en-US", {
                   minimumFractionDigits: 2,
                   maximumFractionDigits: 2,
@@ -111,20 +140,32 @@ export default function BattleResult({
         {/* Predictions comparison */}
         <div className="mb-8 grid grid-cols-2 gap-4">
           {/* Player prediction */}
-          <div className="rounded-xl border border-border bg-input p-6 text-center">
+          <div
+            className={clsx(
+              "rounded-xl border p-6 text-center transition-all",
+              result.playerWon
+                ? "border-green-500/50 bg-green-500/10"
+                : "border-red-500/50 bg-red-500/10"
+            )}
+          >
             <p className="mb-3 text-sm font-semibold text-muted-foreground">
               Your Prediction
             </p>
             <div className="mb-2 text-4xl">
               {getPredictionEmoji(result.playerPrediction)}
             </div>
-            <p className="text-2xl font-bold text-primary">
+            <p
+              className={clsx(
+                "text-2xl font-bold",
+                result.playerWon ? "text-green-400" : "text-red-400"
+              )}
+            >
               {result.playerPrediction}
             </p>
             <p
               className={clsx(
                 "mt-2 text-sm font-semibold",
-                result.playerWon ? "text-green-500" : "text-red-500"
+                result.playerWon ? "text-green-400" : "text-red-400"
               )}
             >
               {result.playerWon ? "✓ Correct!" : "✗ Wrong"}
@@ -132,20 +173,32 @@ export default function BattleResult({
           </div>
 
           {/* AI prediction */}
-          <div className="rounded-xl border border-border bg-input p-6 text-center">
+          <div
+            className={clsx(
+              "rounded-xl border p-6 text-center transition-all",
+              !result.playerWon
+                ? "border-green-500/50 bg-green-500/10"
+                : "border-red-500/50 bg-red-500/10"
+            )}
+          >
             <p className="mb-3 text-sm font-semibold text-muted-foreground">
               {getPersonalityName(aiPersonality)}
             </p>
             <div className="mb-2 text-4xl">
               {getPredictionEmoji(result.aiPrediction)}
             </div>
-            <p className="text-2xl font-bold text-amber-400">
+            <p
+              className={clsx(
+                "text-2xl font-bold",
+                !result.playerWon ? "text-green-400" : "text-red-400"
+              )}
+            >
               {result.aiPrediction}
             </p>
             <p
               className={clsx(
                 "mt-2 text-sm font-semibold",
-                !result.playerWon ? "text-green-500" : "text-red-500"
+                !result.playerWon ? "text-green-400" : "text-red-400"
               )}
             >
               {!result.playerWon ? "✓ Correct!" : "✗ Wrong"}
@@ -154,15 +207,15 @@ export default function BattleResult({
         </div>
 
         {/* AI Reasoning */}
-        <div className="mb-8 rounded-xl border border-border bg-input p-6">
-          <p className="mb-3 font-bold text-foreground">AI Reasoning:</p>
+        <div className="mb-8 rounded-xl border border-border glass-card">
+          <p className="mb-3 font-bold text-foreground">🧠 AI Reasoning:</p>
           <p className="text-sm text-muted-foreground">{result.aiReasoning}</p>
         </div>
 
         {/* Play again button */}
         <button
           onClick={onPlayAgain}
-          className="w-full rounded-lg bg-gradient-to-r from-primary to-amber-500 py-3 font-bold text-primary-foreground transition-all duration-300 hover:shadow-lg hover:shadow-primary/50"
+          className="w-full rounded-lg bg-gradient-to-r from-primary to-primary-dark py-3 font-bold text-primary-foreground transition-all duration-300 hover:shadow-lg hover:shadow-primary/50 active:scale-95"
         >
           Play Again 🎮
         </button>

@@ -30,7 +30,7 @@ export default function CountdownTimer({
   const offset = circumference - (remaining / duration) * circumference
 
   return (
-    <div className="flex flex-col items-center justify-center">
+    <div className="flex flex-col items-center justify-center animate-fade-in">
       <div className="relative h-40 w-40">
         <svg className="absolute inset-0 h-full w-full" viewBox="0 0 100 100">
           {/* Background circle */}
@@ -43,7 +43,7 @@ export default function CountdownTimer({
             strokeWidth="2"
             className="text-border"
           />
-          {/* Progress circle */}
+          {/* Progress circle with glow */}
           <circle
             cx="50"
             cy="50"
@@ -54,7 +54,7 @@ export default function CountdownTimer({
             strokeDasharray={circumference}
             strokeDashoffset={offset}
             strokeLinecap="round"
-            className="text-primary transition-all duration-300"
+            className="text-primary transition-all duration-300 filter drop-shadow-lg"
             style={{
               transform: "rotate(-90deg)",
               transformOrigin: "50px 50px",
@@ -62,17 +62,24 @@ export default function CountdownTimer({
           />
         </svg>
 
-        {/* Center text */}
+        {/* Center text with glow */}
         <div className="absolute inset-0 flex flex-col items-center justify-center">
-          <div className="text-5xl font-bold text-primary">{remaining}</div>
+          <div className="text-6xl font-bold text-primary animate-pulse">
+            {remaining}
+          </div>
           <div className="text-sm text-muted-foreground">seconds</div>
         </div>
       </div>
 
       {/* Status message */}
-      <p className="mt-8 text-center text-lg text-muted-foreground">
-        Battle in progress...
-      </p>
+      <div className="mt-8 text-center">
+        <p className="text-lg text-muted-foreground mb-2">
+          ⚔️ Battle in progress...
+        </p>
+        <p className="text-sm text-muted-foreground">
+          Resolving prediction in {remaining} seconds
+        </p>
+      </div>
     </div>
   )
 }
