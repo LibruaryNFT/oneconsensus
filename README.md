@@ -1,85 +1,148 @@
-# OnePredict Arena
+# OneConsensus
 
-**AI vs Human Prediction Battles on OneChain**
+**AI Risk Intelligence for Tokenized Real-World Assets**
 
-Battle AI opponents to predict crypto price movements. Stake tokens, outsmart AI personalities, earn rewards. Built for OneHack 3.0.
+Three sovereign AI agents debate, analyze, and reach consensus on real-world asset risk — verified on OneChain.
 
 ## How It Works
 
-1. **Pick a market** — BTC, ETH, SOL, or OCT
-2. **Face an AI opponent** — Choose from "Claude Aggressive", "GPT Cautious", or "Llama Balanced"
-3. **Both predict** — Will the price go UP or DOWN in the next 5 minutes?
-4. **AI shows reasoning** — See the AI's analysis and confidence level
-5. **Outcome resolves** — Real price checked, winner takes the pot
-6. **Climb the leaderboard** — Track your wins, streaks, and earnings
+1. **Pick an asset** — Real estate, commodities, agricultural property, renewable energy, maritime
+2. **AI committee debates** — Auditor (yield-focused), Risk Officer (risk-focused), Arbitrator (balanced)
+3. **Consensus reached** — Risk score, collateral ratio, valuation, recommendation
+4. **Verified on OneChain** — Asset evaluation stored on-chain, integrated with OneRWA
 
-## Tech Stack
+## The 3 AI Agents
 
-- **Smart Contracts**: Move (OneChain / Sui fork)
-- **Frontend**: Next.js 15, React 19, Tailwind CSS, shadcn/ui
-- **Backend**: FastAPI (Python), Claude/GPT/Llama AI engines
-- **Price Data**: CoinGecko API + OneDEX integration
-- **Wallet**: OneWallet via @onelabs/dapp-kit
+| Agent | Personality | Model | Focus |
+|-------|-------------|-------|-------|
+| **The Auditor** 📊 | Yield-Maximalist | Claude Opus | Growth opportunity, lower collateral requirements |
+| **The Risk Officer** 🛡️ | Risk-Minimalist | GPT-4o-mini | Downside scenarios, higher collateral requirements |
+| **The Arbitrator** ⚖️ | Balanced | Llama 3.1 70B | Synthesizes both, makes final call |
+
+## Sample Assets
+
+- **Medellin Tech Hub** — Commercial office building, $2.4M, 7.2% yield
+- **Costa Rica Coffee Farm** — Agricultural land, $890K, 5.8% yield
+- **Miami Beach Condo** — Residential property, $1.8M, 4.5% yield
+- **Lagos Solar Farm** — Renewable energy, $3.2M, 9.1% yield
+- **Singapore Cargo Ship** — Maritime freight, $12M, 11.3% yield
+- **Dubai Gold Vault** — Commodity storage, $5.5M, 3.2% yield
 
 ## OneChain Integration
 
-| Product | Integration |
-|---------|-------------|
-| OnePredict | Core prediction engine for market outcomes |
-| OneWallet | Player authentication + staking + rewards |
-| OneDEX | Real-time price feeds for prediction markets |
-| OneID | Player profiles and identity |
-| OnePlay | Gamification and achievement system |
+| Product | How It's Used |
+|---------|---------------|
+| **OneRWA** | Tokenized RWA registry — consensus feeds asset pool |
+| **OneWallet** | Asset investor authentication + collateral deposit |
+| **OnePredict** | Risk scores submitted to oracle for derivatives pricing |
+| **OneID** | Investor identity verification for KYC |
+| **OnePlay** | Leaderboard for top risk analysts (future) |
 
 ## Quick Start
 
-### Backend
+### Backend (Local)
 ```bash
 cd backend
 python -m venv venv
 source venv/bin/activate  # Windows: venv\Scripts\activate
 pip install -r requirements.txt
-cp .env.example .env  # Add your API keys
-uvicorn app:app --reload --port 8000
+cp .env.example .env  # Add your API keys (ANTHROPIC_API_KEY, OPENAI_API_KEY, GROQ_API_KEY)
+python -m uvicorn app:app --reload --port 8000
+# API docs: http://localhost:8000/docs
 ```
 
-### Frontend
+### Backend (Deploy to Render)
+
+**One-click deployment via Render.com:**
+
+1. Go to https://dashboard.render.com
+2. Click "New +" → "Web Service" → Connect `LibruaryNFT/one-predict-arena` repo
+3. **Build Command**: `pip install -r backend/requirements.txt`
+4. **Start Command**: `cd backend && uvicorn app:app --host 0.0.0.0 --port $PORT`
+5. Add environment variables:
+   - `ANTHROPIC_API_KEY` = your key
+   - `OPENAI_API_KEY` = your key
+   - `GROQ_API_KEY` = your key
+6. Click "Create Web Service"
+
+**Result**: Your backend URL will be `https://one-predict-arena-api.onrender.com` (free tier takes ~30s to start)
+
+See [`DEPLOY.md`](./DEPLOY.md) for other deployment options (Railway, Heroku, local Docker).
+
+### Frontend (Coming Soon)
 ```bash
 cd frontend
 npm install
-npm run dev  # http://localhost:3000
-```
-
-### Contracts
-```bash
-cd contracts
-one move build
-one move test
-one move publish --network testnet
+VITE_API_BASE_URL=https://one-predict-arena-api.onrender.com npm run dev
+# Update to your live backend URL once deployed
 ```
 
 ## Architecture
 
 ```
-┌─────────────┐     ┌──────────────┐     ┌───────────────┐
-│   Frontend   │────▶│   Backend    │────▶│  AI Models    │
-│  Next.js 15  │     │   FastAPI    │     │ Claude/GPT/   │
-│  OneWallet   │     │  Price Feed  │     │ Llama         │
-└──────┬───────┘     └──────────────┘     └───────────────┘
-       │
-       ▼
-┌──────────────┐     ┌──────────────┐
-│  OneChain    │────▶│  OneDEX      │
-│  Contracts   │     │  Price Feed  │
-│  (Move)      │     └──────────────┘
-└──────────────┘
+┌─────────────────────────────────────────────────────┐
+│             INVESTOR / ANALYST                      │
+│         (Web Interface or API Client)               │
+└──────────────────┬──────────────────────────────────┘
+                   │ REST API
+┌──────────────────▼──────────────────────────────────┐
+│            ONECONSENSUS BACKEND                     │
+│  FastAPI (Python) - RWA Evaluation Engine           │
+├─────────────────────────────────────────────────────┤
+│  ┌─────────────┐  ┌─────────────┐  ┌─────────────┐ │
+│  │  Auditor    │  │ Risk Officer│  │ Arbitrator  │ │
+│  │  (Claude)   │  │  (GPT-4o)   │  │ (Llama)     │ │
+│  └─────────────┘  └─────────────┘  └─────────────┘ │
+│       (Parallel Assessment)   (Consensus Synthesis) │
+└──────────────────┬──────────────────────────────────┘
+                   │
+        ┌──────────┴──────────┐
+        ▼                     ▼
+    OneChain              RWA Registry
+    (Asset Pool)          (Asset Catalog)
 ```
 
-## AI Personalities
+## Tech Stack
 
-- **Claude Aggressive** 🔥 — High risk, bold calls. "I see a breakout forming..."
-- **GPT Cautious** 🛡️ — Conservative, hedges. "The indicators suggest modest movement..."
-- **Llama Balanced** ⚖️ — Data-driven, moderate. "Based on volume and momentum..."
+- **Smart Contracts**: Move (OneChain / Sui fork)
+- **Frontend**: Next.js 15, React 19, Tailwind CSS, shadcn/ui (coming soon)
+- **Backend**: FastAPI (Python), async consensus engine
+- **AI Engines**: Claude Opus (Anthropic), GPT-4o-mini (OpenAI), Llama 3.1 (Groq)
+- **Wallet**: OneWallet via @onelabs/dapp-kit
+
+## API Endpoints
+
+```
+GET    /api/assets              # List all RWA assets
+GET    /api/assets/{asset_id}   # Get asset details
+POST   /api/evaluate            # Run consensus evaluation
+GET    /api/agents              # List AI agents
+GET    /health                  # Health check
+```
+
+## Quick Test
+
+```bash
+# List assets
+curl http://localhost:8000/api/assets
+
+# Get one asset
+curl http://localhost:8000/api/assets/medellin-tech-hub
+
+# Evaluate (THE MAIN ENDPOINT)
+curl -X POST "http://localhost:8000/api/evaluate?asset_id=medellin-tech-hub"
+
+# List agents
+curl http://localhost:8000/api/agents
+```
+
+## Key Outputs
+
+- **Risk Score** (1-100) — Combined asset risk assessment
+- **Collateral Ratio** — How much collateral needed per $1 of value
+- **Valuation** — Consensus estimate across all three agents
+- **Debate Summary** — Where agents agreed/disagreed
+- **Recommendation** — Strong Buy, Buy, Hold, Caution, Strong Caution
 
 ## License
 

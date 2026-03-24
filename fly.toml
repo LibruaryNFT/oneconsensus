@@ -1,0 +1,36 @@
+# fly.toml app configuration generated for one-predict-arena-api
+# See https://fly.io/docs/reference/configuration/ for information about how to use this file.
+
+app = "one-predict-arena-api"
+primary_region = "iad"
+
+[build]
+  dockerfile = "backend/Dockerfile"
+
+[env]
+  PORT = "8000"
+
+[http_service]
+  internal_port = 8000
+  force_https = true
+  auto_stop_machines = true
+  auto_start_machines = true
+  min_machines_running = 1
+  processes = ["app"]
+
+[[vm]]
+  memory = "512mb"
+  cpus = 1
+
+[[statics]]
+  guest_path = "/app/static"
+  url_prefix = "/static"
+
+[checks]
+  [checks.alive]
+    type = "http"
+    interval = 10000
+    timeout = 5000
+    grace_period = "30s"
+    method = "GET"
+    path = "/health"
