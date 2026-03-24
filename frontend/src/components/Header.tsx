@@ -37,6 +37,12 @@ export default function Header() {
           >
             Leaderboard
           </Link>
+          <Link
+            href="/profile"
+            className="text-foreground transition-colors hover:text-primary"
+          >
+            Profile
+          </Link>
         </div>
 
         {/* Wallet Connect Button */}

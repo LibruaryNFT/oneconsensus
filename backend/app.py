@@ -1,15 +1,16 @@
 """FastAPI app for OnePredict Arena."""
 
 import logging
+import time
 from contextlib import asynccontextmanager
+
+from dotenv import load_dotenv
 from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
-from dotenv import load_dotenv
-
-from schemas import PredictionRequest, AIPrediction, BattleResult
+from schemas import AIPrediction, BattleResult, PredictionRequest
+from services.ai_predictor import AI_PERSONALITIES, get_ai_prediction
+from services.battle_engine import create_battle, get_battle, list_battles, resolve_battle
 from services.price_feed import get_current_price
-from services.ai_predictor import get_ai_prediction, AI_PERSONALITIES
-from services.battle_engine import create_battle, resolve_battle, get_battle, list_battles
 
 # Load environment variables
 load_dotenv()
@@ -48,8 +49,9 @@ app.add_middleware(
 )
 
 
-# === Health Endpoint ===
+# === Health Endpoints ===
 @app.get("/health")
+@app.get("/api/health")
 async def health():
     """Health check endpoint."""
     return {"status": "ok", "service": "OnePredict Arena"}
@@ -228,6 +230,37 @@ async def get_all_battles():
     }
 
 
+# === Leaderboard Endpoint ===
+@app.get("/api/leaderboard")
+async def get_leaderboard():
+    """
+    Get top players leaderboard (mock data for hackathon).
+
+    Returns:
+        List of top 15 players with wins, total battles, win rate
+    """
+    # Mock leaderboard data
+    mock_players = [
+        {"rank": 1, "name": "CryptoMaster", "wins": 47, "total_battles": 63, "win_rate": 0.746},
+        {"rank": 2, "name": "TrendFollower", "wins": 44, "total_battles": 62, "win_rate": 0.710},
+        {"rank": 3, "name": "SafeHands", "wins": 39, "total_battles": 58, "win_rate": 0.672},
+        {"rank": 4, "name": "VoltageMax", "wins": 38, "total_battles": 61, "win_rate": 0.623},
+        {"rank": 5, "name": "MarketWhisperer", "wins": 36, "total_battles": 57, "win_rate": 0.632},
+        {"rank": 6, "name": "QuickTrade", "wins": 35, "total_battles": 59, "win_rate": 0.593},
+        {"rank": 7, "name": "LongTermBull", "wins": 33, "total_battles": 56, "win_rate": 0.589},
+        {"rank": 8, "name": "RiskManager", "wins": 31, "total_battles": 60, "win_rate": 0.517},
+        {"rank": 9, "name": "SwiftAnalyzer", "wins": 29, "total_battles": 55, "win_rate": 0.527},
+        {"rank": 10, "name": "DataDriven", "wins": 27, "total_battles": 54, "win_rate": 0.500},
+        {"rank": 11, "name": "NoiseFilter", "wins": 25, "total_battles": 52, "win_rate": 0.481},
+        {"rank": 12, "name": "MomentumRider", "wins": 23, "total_battles": 51, "win_rate": 0.451},
+        {"rank": 13, "name": "CalmInStorm", "wins": 22, "total_battles": 56, "win_rate": 0.393},
+        {"rank": 14, "name": "PatternSeeker", "wins": 20, "total_battles": 49, "win_rate": 0.408},
+        {"rank": 15, "name": "NewTrader", "wins": 18, "total_battles": 45, "win_rate": 0.400},
+    ]
+
+    return {"leaderboard": mock_players, "timestamp": int(time.time())}
+
+
 # === Root endpoint ===
 @app.get("/")
 async def root():
@@ -245,6 +278,7 @@ async def root():
             "resolve_battle": "POST /api/battle/{battle_id}/resolve",
             "battle_status": "GET /api/battle/{battle_id}",
             "all_battles": "GET /api/battles",
+            "leaderboard": "GET /api/leaderboard",
         },
     }
 
