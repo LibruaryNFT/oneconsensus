@@ -1,4 +1,4 @@
-export const dynamic = "force-dynamic"
+"use client"
 
 import HeroSection from "@/components/HeroSection"
 import FeatureCard from "@/components/FeatureCard"
