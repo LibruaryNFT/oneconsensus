@@ -365,6 +365,9 @@ export default function ArenaPage() {
       isDemo = true
     }
 
+    // Mark evaluation with demo flag
+    evaluation.isDemo = isDemo
+
     setResult(evaluation)
 
     // Auditor reveals first (1.5s)
