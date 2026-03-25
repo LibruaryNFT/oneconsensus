@@ -22,7 +22,7 @@ pip install -r requirements.txt
 
 ### 2. Setup API Keys
 
-Copy API keys to `.env` file (from `<eco-root>/.env`):
+Copy API keys to `.env` file (from `.env.example`):
 
 ```bash
 ANTHROPIC_API_KEY=sk-ant-api03-...

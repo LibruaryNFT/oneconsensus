@@ -27,3 +27,14 @@ Thumbs.db
 # Testing
 .coverage
 coverage/
+.pytest_cache/
+
+# Demo build artifacts
+demos/audio_segments/
+demos/audio_segments_v4/
+demos/screen_recording*/
+demos/debug_frames/
+demos/v4_frames/
+demos/voiceover.mp3
+demos/*.txt
+__pycache__/

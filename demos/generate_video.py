@@ -17,13 +17,12 @@ if sys.platform == "win32":
 
 from dotenv import load_dotenv
 
-load_dotenv(Path("<eco-root>/.env"))
 load_dotenv(Path(__file__).parent.parent / "backend" / ".env")
 
 DEMO_DIR = Path(__file__).parent
 APP_URL = "http://localhost:3000"
-FFMPEG = "<user-home>/AppData/Local/Microsoft/WinGet/Packages/Gyan.FFmpeg_Microsoft.Winget.Source_8wekyb3d8bbwe/ffmpeg-8.1-full_build/bin/ffmpeg.exe"
-FFPROBE = FFMPEG.replace("ffmpeg.exe", "ffprobe.exe")
+FFMPEG = os.getenv("FFMPEG_PATH", "ffmpeg")
+FFPROBE = FFMPEG.replace("ffmpeg", "ffprobe")
 
 # Script synced to what's actually on screen
 FULL_SCRIPT = """What if three AI agents could independently analyze a real-world asset worth hundreds of millions of dollars, debate its risks, and record their verdict on the blockchain?
