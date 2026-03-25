@@ -40,7 +40,7 @@ Custom React hook for blockchain interactions:
 
 ### 1. **src/lib/wallet-provider.tsx**
 - Updated network config to use OneChain testnet RPC
-- Replaced Sui testnet RPC with `https://rpc-testnet.onelabs.cc:443`
+- Configured OneChain testnet RPC with `https://rpc-testnet.onelabs.cc:443`
 - Maintains `@mysten/dapp-kit` compatibility
 
 ### 2. **src/app/arena/page.tsx**

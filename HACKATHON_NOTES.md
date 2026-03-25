@@ -355,7 +355,7 @@ curl -X POST https://rpc.onechain.io/testnet \
 | **API Docs (Interactive)** | `http://localhost:8000/docs` |
 | **Assets List** | `http://localhost:8000/api/assets` |
 | **Sample Evaluation** | `curl -X POST http://localhost:8000/api/evaluate?asset_id=medellin-tech-hub` |
-| **Move Docs** | `https://docs.sui.io/guide/move` |
+| **Move Docs** | `https://docs.onelabs.cc/DevelopmentDocument` |
 | **OneChain Docs** | `https://docs.onechain.io` |
 | **Hackathon** | `https://dorahacks.io/hackathon/onehackathon` |
 

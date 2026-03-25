@@ -127,7 +127,7 @@ VITE_API_BASE_URL=https://one-predict-arena-api.onrender.com npm run dev
 
 ## Tech Stack
 
-- **Smart Contracts**: Move (OneChain / Sui fork)
+- **Smart Contracts**: Move (OneChain)
 - **Frontend**: Next.js 15, React 19, Tailwind CSS, shadcn/ui (coming soon)
 - **Backend**: FastAPI (Python), async consensus engine
 - **AI Engines**: Claude Opus (Anthropic), GPT-4o-mini (OpenAI), Llama 3.1 (Groq)

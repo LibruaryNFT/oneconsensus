@@ -19,7 +19,7 @@ function loadKeypair(): Ed25519Keypair {
     return Ed25519Keypair.fromSecretKey(keyBytes);
   }
 
-  // Fall back to sui keystore
+  // Fall back to OneChain keystore
   const keystorePath = path.join(
     process.env.USERPROFILE || process.env.HOME || "~",
     ".sui", "sui_config", "sui.keystore"

@@ -16,7 +16,7 @@ async function main() {
     const client = new SuiClient({ url: TESTNET_URL });
     console.log(`Connected to: ${TESTNET_URL}`);
 
-    // Load keypair from sui keystore
+    // Load keypair from OneChain keystore
     const keystore = JSON.parse(fs.readFileSync(KEYSTORE_PATH, 'utf8'));
     if (keystore.length === 0) throw new Error('No keypairs in keystore');
 

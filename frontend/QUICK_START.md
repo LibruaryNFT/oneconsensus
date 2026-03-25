@@ -127,7 +127,7 @@ No `.env` changes needed for demo mode.
 
 **Explorer link doesn't work**
 - Make sure network is OneChain testnet (`onescan.cc/testnet`)
-- Not Sui, not mainnet
+- OneChain testnet only
 
 **Wallet not detected**
 - Make sure user has dApp-compatible wallet installed

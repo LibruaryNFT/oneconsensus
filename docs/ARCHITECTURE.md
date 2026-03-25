@@ -275,7 +275,7 @@ GET /api/health
 **Verification:** [OneScan Explorer](https://onescan.cc/testnet/object/0x1f0b34d95db5859753f3aa7508055c5c049e33d313acf3585bf039cf22fb974e)
 
 #### `rwa_assessment.move`
-**Smart contract for on-chain assessment storage (OneChain/Sui)**
+**Smart contract for on-chain assessment storage (OneChain)**
 
 ##### Struct
 - **`RWAAssetAssessment<T>`**
@@ -433,7 +433,7 @@ one move publish --network testnet
 |-------|-----------|-----|
 | Backend | FastAPI (Python) | Async, type-safe, great for AI orchestration |
 | AI Models | Claude/GPT/Llama | Different strengths, accessible APIs |
-| Smart Contracts | Move (Sui fork) | Type-safe assets, OneChain native |
+| Smart Contracts | Move (OneChain) | Type-safe assets, OneChain native |
 | Frontend (Future) | Next.js 15 + React 19 | SSR, modern DX |
 | Authentication | OneWallet + JWT | OneChain native |
 | Database | PostgreSQL (future) | Asset history, evaluation logs |
