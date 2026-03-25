@@ -1,7 +1,7 @@
 "use client"
 
 import { ReactNode } from "react"
-import { SuiClientProvider, WalletProvider, createNetworkConfig } from "@mysten/dapp-kit"
+import { SuiClientProvider, WalletProvider, createNetworkConfig } from "@onelabs/dapp-kit"
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query"
 import { ONECHAIN_CONFIG } from "./contracts"
 

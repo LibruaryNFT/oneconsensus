@@ -1,7 +1,7 @@
 "use client"
 
 import { useState } from "react"
-import { useCurrentAccount } from "@mysten/dapp-kit"
+import { useCurrentAccount } from "@onelabs/dapp-kit"
 import { SAMPLE_ASSETS } from "@/lib/constants"
 import { ChevronRight, Shield, TrendingUp, AlertCircle, CheckCircle2, Loader2, ExternalLink } from "lucide-react"
 import { ONECHAIN_CONFIG, formatContractAddress, getExplorerLink } from "@/lib/contracts"
