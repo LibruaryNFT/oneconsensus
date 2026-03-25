@@ -10,6 +10,36 @@ import OnChainBadge from "@/components/OnChainBadge"
 
 type EvaluationState = "SELECT_ASSET" | "EVALUATING" | "RESULTS"
 
+interface BackendRiskAssessment {
+  agent_name: string
+  risk_score: number
+  collateral_ratio: number
+  valuation: number
+  reasoning: string
+  risks: string[]
+  opportunities: string[]
+}
+
+interface BackendConsensusResult {
+  asset: {
+    id: string
+    name: string
+    asset_type: string
+    location: string
+    estimated_value: number
+    yield_rate: number
+    description: string
+    risk_factors: string[]
+  }
+  assessments: BackendRiskAssessment[]
+  final_risk_score: number
+  final_collateral_ratio: number
+  final_valuation: number
+  consensus_reasoning: string
+  debate_summary: string
+  recommendation: string
+}
+
 interface AssessmentPanel {
   agent: "auditor" | "risk_officer" | "arbitrator"
   name: string
@@ -32,6 +62,92 @@ interface EvaluationResult {
   consensus: string
   keyRisks: string[]
   keyOpportunities: string[]
+  isDemo?: boolean
+}
+
+/**
+ * Convert backend consensus result to frontend evaluation result
+ */
+function convertBackendResult(backendResult: BackendConsensusResult, sampleAsset: (typeof SAMPLE_ASSETS)[0]): EvaluationResult {
+  const auditor = backendResult.assessments[0]
+  const riskOfficer = backendResult.assessments[1]
+  const arbitrator = backendResult.assessments[2]
+
+  // Convert recommendation to our format
+  const recommendationMap: Record<string, "Buy" | "Hold" | "Caution" | "Avoid"> = {
+    "Strong Buy": "Buy",
+    "Buy": "Buy",
+    "Hold": "Hold",
+    "Caution": "Caution",
+    "Strong Caution": "Avoid",
+  }
+
+  const recommendation = (recommendationMap[backendResult.recommendation] || "Hold") as "Buy" | "Hold" | "Caution" | "Avoid"
+  const collateralRatio = `${backendResult.final_collateral_ratio.toFixed(1)}%`
+
+  return {
+    asset: sampleAsset,
+    riskScore: Math.round(backendResult.final_risk_score),
+    collateralRatio,
+    recommendation,
+    auditor: {
+      agent: "auditor",
+      name: auditor.agent_name,
+      emoji: "📊",
+      role: "Yield Maximalist",
+      accent: "emerald",
+      analysis: auditor.reasoning,
+      keyPoints: auditor.opportunities,
+      riskTone: 20,
+    },
+    riskOfficer: {
+      agent: "risk_officer",
+      name: riskOfficer.agent_name,
+      emoji: "🛡️",
+      role: "Compliance First",
+      accent: "red",
+      analysis: riskOfficer.reasoning,
+      keyPoints: riskOfficer.risks,
+      riskTone: 72,
+    },
+    arbitrator: {
+      agent: "arbitrator",
+      name: arbitrator.agent_name,
+      emoji: "⚖️",
+      role: "Synthesizer",
+      accent: "amber",
+      analysis: arbitrator.reasoning,
+      keyPoints: [
+        `Risk Score: ${backendResult.final_risk_score.toFixed(0)}/100`,
+        `Collateral Ratio: ${backendResult.final_collateral_ratio.toFixed(1)}%`,
+        "Both perspectives reconciled",
+        "Ready for institutional deployment",
+      ],
+      riskTone: 45,
+    },
+    consensus: `CONSENSUS: ${recommendation.toUpperCase()}. ${backendResult.consensus_reasoning}`,
+    keyRisks: riskOfficer.risks,
+    keyOpportunities: auditor.opportunities,
+  }
+}
+
+/**
+ * Fetch evaluation from backend API
+ */
+async function fetchEvaluationFromBackend(assetId: string, apiUrl: string): Promise<BackendConsensusResult> {
+  const url = new URL("/api/evaluate", apiUrl)
+  url.searchParams.append("asset_id", assetId)
+
+  const response = await fetch(url.toString(), {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+  })
+
+  if (!response.ok) {
+    throw new Error(`API error: ${response.status} ${response.statusText}`)
+  }
+
+  return response.json()
 }
 
 function generateMockEvaluation(asset: (typeof SAMPLE_ASSETS)[0]): EvaluationResult {
@@ -119,6 +235,7 @@ function generateMockEvaluation(asset: (typeof SAMPLE_ASSETS)[0]): EvaluationRes
       "Long-term inflation hedge characteristics",
       "On-chain transparency and auditability",
     ],
+    isDemo: true,
   }
 }
 
@@ -231,8 +348,23 @@ export default function ArenaPage() {
     setShowRiskOfficer(false)
     setShowArbitrator(false)
 
-    // Staggered reveal of panels
-    const evaluation = generateMockEvaluation(asset)
+    // Get API URL from environment or fallback to localhost
+    const apiUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000"
+
+    let evaluation: EvaluationResult
+    let isDemo = false
+
+    try {
+      // Fetch real evaluation from backend API
+      const backendResult = await fetchEvaluationFromBackend(asset.id, apiUrl)
+      evaluation = convertBackendResult(backendResult, asset)
+    } catch (error) {
+      // Fallback to mock data on error
+      console.error("Backend API call failed, using demo mode:", error)
+      evaluation = generateMockEvaluation(asset)
+      isDemo = true
+    }
+
     setResult(evaluation)
 
     // Auditor reveals first (1.5s)
@@ -429,6 +561,14 @@ export default function ArenaPage() {
       {/* RESULTS STATE - Full evaluation display */}
       {state === "RESULTS" && result && (
         <div className="space-y-8 animate-fade-in">
+          {/* Demo Mode Badge */}
+          {result.isDemo && (
+            <div className="rounded-lg border border-amber-500/50 bg-amber-500/10 px-4 py-2 flex items-center gap-2">
+              <span className="text-amber-400 text-sm font-semibold">⚠️ Demo Mode</span>
+              <span className="text-amber-300/80 text-sm">Backend API unavailable - showing simulated evaluation</span>
+            </div>
+          )}
+
           {/* The 3 Panel Consensus Display */}
           <div className="grid gap-6 lg:grid-cols-3">
             <AssessmentCard panel={result.auditor} isRevealing={false} />
