@@ -54,7 +54,13 @@ app.add_middleware(
 @app.get("/api/health")
 async def health():
     """Health check endpoint."""
-    return {"status": "ok", "service": "OneConsensus - RWA Risk Assessment Platform"}
+    from version import deployed_sha
+
+    return {
+        "status": "ok",
+        "service": "OneConsensus - RWA Risk Assessment Platform",
+        "sha": deployed_sha(),
+    }
 
 
 # === RWA Asset Endpoints (NEW OneConsensus) ===

@@ -1,0 +1,72 @@
+name: Deploy to tenants-1
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+  workflow_dispatch: {}
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+          cache: pip
+          cache-dependency-path: backend/requirements.txt
+      - name: Install dependencies
+        run: pip install -r backend/requirements.txt
+      # No unit suite yet — gate on the app importing cleanly, which catches
+      # the broken-import class that silently bricks deploys.
+      - name: Validate import
+        working-directory: backend
+        run: python -c "import app; print('import OK')"
+
+  deploy:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    needs: [check]
+    if: github.event_name != 'pull_request'
+    steps:
+      - name: Setup SSH key
+        run: |
+          mkdir -p ~/.ssh
+          echo "${{ secrets.VPS_SSH_KEY }}" > ~/.ssh/deploy_key
+          chmod 600 ~/.ssh/deploy_key
+          ssh-keyscan -H ${{ secrets.VPS_HOST }} >> ~/.ssh/known_hosts
+
+      - name: Deploy over SSH (git reset + restart)
+        env:
+          SHA: ${{ github.sha }}
+        run: |
+          ssh -i ~/.ssh/deploy_key oneconsensus@${{ secrets.VPS_HOST }} "SHA=$SHA bash -s" << 'ENDSSH'
+            set -euo pipefail
+            cd /opt/oneconsensus
+            git fetch --quiet origin main
+            AHEAD=$(git rev-list --count origin/main..HEAD)
+            if [ "$AHEAD" -gt 0 ]; then
+              echo "ABORT: $AHEAD local commit(s) ahead of origin/main would be lost"; exit 1
+            fi
+            git reset --hard origin/main
+            backend/venv/bin/pip install -r backend/requirements.txt -q
+            git rev-parse HEAD > /opt/oneconsensus/DEPLOYED_SHA
+            sudo -n systemctl restart oneconsensus-api
+            echo "Deploy complete: $(date -u)"
+          ENDSSH
+
+      - name: Verify deployment (health + SHA match)
+        env:
+          SHA: ${{ github.sha }}
+        run: |
+          sleep 6
+          BODY=$(curl -sf -m 15 "https://api.oneconsensus.one/health" || echo '{}')
+          echo "health: $BODY"
+          GOT_SHA=$(echo "$BODY" | python3 -c "import sys,json; print(json.load(sys.stdin).get('sha',''))" 2>/dev/null || echo "")
+          if [ "$GOT_SHA" != "$SHA" ]; then
+            echo "::error::running SHA ($GOT_SHA) != shipped $SHA — restart did not pick up new code"; exit 1
+          fi
+          echo "Verified: running SHA matches $SHA"
