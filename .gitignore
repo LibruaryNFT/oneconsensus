@@ -38,3 +38,6 @@ demos/v4_frames/
 demos/voiceover.mp3
 demos/*.txt
 __pycache__/
+
+# CI-stamped deployed commit (backend/version.py)
+DEPLOYED_SHA
