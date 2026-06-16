@@ -46,6 +46,13 @@ jobs:
           ssh -i ~/.ssh/deploy_key oneconsensus@${{ secrets.VPS_HOST }} "SHA=$SHA bash -s" << 'ENDSSH'
             set -euo pipefail
             cd /opt/oneconsensus
+            # Self-heal: a deleted/renamed remote branch can leave a corrupted
+            # remote-tracking ref ("bad object refs/remotes/origin/*") that
+            # aborts fetch. Prune, then drop any ref that no longer resolves.
+            git remote prune origin >/dev/null 2>&1 || true
+            for r in $(git for-each-ref --format='%(refname)' refs/remotes/origin 2>/dev/null); do
+              git rev-parse --verify -q "$r^{commit}" >/dev/null 2>&1 || git update-ref -d "$r" 2>/dev/null || true
+            done
             git fetch --quiet origin main
             AHEAD=$(git rev-list --count origin/main..HEAD)
             if [ "$AHEAD" -gt 0 ]; then
