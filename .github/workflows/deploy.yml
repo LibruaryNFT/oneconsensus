@@ -53,6 +53,12 @@ jobs:
             for r in $(git for-each-ref --format='%(refname)' refs/remotes/origin 2>/dev/null); do
               git rev-parse --verify -q "$r^{commit}" >/dev/null 2>&1 || git update-ref -d "$r" 2>/dev/null || true
             done
+            # Self-heal: a prior manual `sudo git` run can leave root-owned
+            # artifacts (e.g. .git/FETCH_HEAD) that block the deploy user's
+            # fetch with "Permission denied". Reclaim ownership best-effort,
+            # then drop the stale FETCH_HEAD (git recreates it on fetch).
+            sudo -n chown -R oneconsensus:oneconsensus /opt/oneconsensus/.git 2>/dev/null || true
+            rm -f .git/FETCH_HEAD 2>/dev/null || true
             git fetch --quiet origin main
             AHEAD=$(git rev-list --count origin/main..HEAD)
             if [ "$AHEAD" -gt 0 ]; then
