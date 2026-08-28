@@ -6,7 +6,7 @@ build-env = "testnet"
 chain-id = "e9eed8f1"
 
 [[published]]
-source = { local = '\\?\C:\Code\one-predict-arena\contracts' }
+source = { local = 'contracts' }
 published-at = "0x26d719545b6539f56d4084275972a1eaa437ad56426bd02b3dbb9dfa1c72007a"
 original-id = "0x26d719545b6539f56d4084275972a1eaa437ad56426bd02b3dbb9dfa1c72007a"
 version = 1
